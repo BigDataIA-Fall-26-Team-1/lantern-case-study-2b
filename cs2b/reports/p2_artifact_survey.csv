@@ -1,0 +1,17 @@
+artifact,measure,count,filings,fair_value_musd,examples
+totals_subtotals,holdings the kit's rule_totals drops,45,22,3616.8,0001213900-26-002153 / soi_row 2816; 0002037804-26-000005 / soi_row 13100
+totals_subtotals,...of which look like borrowers named 'Total ...',12,4,50.3,0001143513-26-000004 / soi_row 64134; 0001143513-26-000004 / soi_row 64135
+subtotal_rows_no_id,current SOI rows with no identifier but a type/industry/affiliation axis,13597,169,2889694.0,0001193125-26-021227 / soi_row 28; 0001193125-26-021227 / soi_row 30
+custom_axis_no_id,"current SOI rows with no identifier, a fair value, and no category axis",4814,158,2266406.2,0001213900-26-002153 / soi_row 5; 0001213900-26-002153 / soi_row 18
+cash_lines,holdings the kit's rule_cash drops,35,20,3179.7,0001213900-26-002153 / soi_row 2816; 0001213900-26-002153 / soi_row 2826
+restated_copies,holdings built from 2+ SOI rows whose values agree,7881,69,60857.9,0001193125-26-021227 / soi_row 160;161; 0001193125-26-021227 / soi_row 162;163
+restated_copies,holdings built from 2+ SOI rows whose values disagree,1,1,0.0,0000930413-26-000842 / soi_row 76694;76991;77601;78477;79133;79736;80411;81820;82106;82859;83350;83818;84238;84966;85061;85313;85591;86219;86936;86983;109690
+comparative_rows,comparative-period SOI rows (prior year-end),76622,159,4704208.3,0001193125-26-021227 / soi_row 0; 0001193125-26-021227 / soi_row 3
+unfunded_commitments,holdings with negative fair value,5431,109,-409.8,0001193125-26-021227 / soi_row 665;666; 0001193125-26-021227 / soi_row 747;748
+unfunded_commitments,holdings with fair value exactly 0,6302,115,0.0,0001193125-26-021227 / soi_row 160;161; 0001193125-26-021227 / soi_row 511;512
+custom_tag_values,holdings with no fair value in SOI,5178,124,0.0,0001213900-26-002153 / soi_row 117; 0001213900-26-002153 / soi_row 125
+affiliate_control,holdings with an affiliation on the holding itself,0,0,0.0,
+equity_warrants,holdings with no principal whose identifier names equity or warrants,6954,140,37689.7,0001193125-26-021227 / soi_row 160;161; 0001193125-26-021227 / soi_row 162;163
+jv_subsidiary_axis,holdings on the Nonconsolidated Subsidiary axis,788,10,4847.3,0001193125-26-077703 / soi_row 12576; 0001193125-26-077703 / soi_row 12577
+range_axis,holdings on the Range axis,534,14,657.4,0001496099-26-000008 / soi_row 13343; 0001496099-26-000008 / soi_row 13564
+member_as_identifier,holdings whose identifier is an XBRL member ('... [Member]'),66,3,1706.1,0000930413-26-000842 / soi_row 76694;76991;77601;78477;79133;79736;80411;81820;82106;82859;83350;83818;84238;84966;85061;85313;85591;86219;86936;86983;109690; 0000930413-26-000842 / soi_row 83714;117951

@@ -1,0 +1,7 @@
+rule,artifact,rows_affected,example
+rule_jv_subsidiary,JV / nonconsolidated-subsidiary portfolio row (the BDC's stake in the JV is its own holding),788,0001193125-26-077703 / soi_row 12576
+rule_jv_schedule_style,JV schedule row without a subsidiary axis (PennantPark PSSL style: '<instrument> Issuer Name ...'),415,0001193125-26-021227 / soi_row 160;161
+rule_range_axis,"range bound on Range Axis (Minimum/Maximum/Weighted Average), not a holding",530,0001628280-26-011734 / soi_row 72803
+rule_category_member,"identifier is an XBRL category member ('First Lien Secured Debt [Member]'): a subtotal, not an investment",12,0000930413-26-000842 / soi_row 76694;76991;77601;78477;79133;79736;80411;81820;82106;82859;83350;83818;84238;84966;85061;85313;85591;86219;86936;86983;109690
+rule_totals_v2,"identifier names a total or subtotal (not a borrower named 'Total ...', not a row with loan terms)",31,0001213900-26-002153 / soi_row 2816
+rule_cash,cash or money-market line in schedule,34,0001213900-26-002153 / soi_row 2826
