@@ -172,3 +172,20 @@ def test_checker_catches_a_silently_dropped_filing():
         cov[~cov["name"].str.contains("FOXTROT")].to_csv(root / "reports" / "coverage.csv", index=False)
         failed = [n for n, ok, _ in check.run_checks(root) if not ok]
         assert failed == ["every filing with SOI rows is in coverage.csv (none dropped)"], failed
+
+
+def test_renamed_soi_value_columns_map_by_alias():
+    """2026 SOI files put fair value and cost under headers missing from TAG."""
+    import pandas as pd
+    from lookthrough.mapping import map_soi_columns, to_canonical
+
+    tag = pd.DataFrame({"tag": ["InvestmentOwnedAtFairValue"], "custom": ["0"],
+                        "tlabel": ["Investment Owned, Fair Value"]})
+    soi = pd.DataFrame({"adsh": ["x"],
+                        "Investment Owned, Fair Value": [None],
+                        "Initial fair value of Investment": ["100"],
+                        "Adjusted cost basis": ["90"]})
+    colmap = map_soi_columns(list(soi.columns), tag)
+    out = to_canonical(soi, colmap)
+    assert out.loc[0, "fair_value"] == 100
+    assert out.loc[0, "cost"] == 90

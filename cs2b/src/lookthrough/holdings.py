@@ -3,7 +3,7 @@ import pandas as pd
 
 from .mapping import CANONICAL
 
-KEY = ["adsh", "ddate", "identifier"]
+KEY = ["adsh", "ddate", "identifier", "subsidiary", "range"]
 TEXT = ["investment_type", "industry", "affiliation"]
 META = ["cik", "name", "form", "period", "cstm", "inlineurl",
         "is_current"]
