@@ -35,7 +35,12 @@ ALIASES = {
 AXES = {"identifier": "Investment, Identifier Axis",
         "investment_type": "Investment Type Axis",
         "industry": "Industry Sector Axis",
-        "affiliation": "Investment, Issuer Affiliation Axis"}
+        "affiliation": "Investment, Issuer Affiliation Axis",
+        # P1: rows on these axes are distinct holdings (JV portfolios, valuation
+        # ranges); without them in the key, coalescing merges different holdings.
+        "subsidiary": "Investment Company, Nonconsolidated Subsidiary Axis",
+        "range": "Range Axis"}
+
 META = ["soi_row", "adsh", "cik", "name", "form", "period",
         "ddate", "cstm", "inlineurl"]
 NUMERIC = ["fair_value", "cost", "principal", "interest_rate",
