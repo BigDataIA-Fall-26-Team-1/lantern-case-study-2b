@@ -1,0 +1,23 @@
+[
+  {
+    "path": "data/raw/2026_01_bdc.zip",
+    "url": "https://www.sec.gov/files/datastandardsinnovation/data/business-development-company-bdc-data-sets/2026_01_bdc.zip",
+    "bytes": 870491,
+    "sha256": "53e8b1f3124e2684339da2c7e576baf4c784cc1031b110465dd0a9802e26c840",
+    "recorded": "2026-10-25"
+  },
+  {
+    "path": "data/raw/2026_02_bdc.zip",
+    "url": "https://www.sec.gov/files/datastandardsinnovation/data/business-development-company-bdc-data-sets/2026_02_bdc.zip",
+    "bytes": 16037424,
+    "sha256": "b7fd4d7adfcffd24d71bf9d5250950e034e7ca1e4f25bbb200dd7cea083ff4e1",
+    "recorded": "2026-10-25"
+  },
+  {
+    "path": "data/raw/2026_03_bdc.zip",
+    "url": "https://www.sec.gov/files/datastandardsinnovation/data/business-development-company-bdc-data-sets/2026_03_bdc.zip",
+    "bytes": 28974272,
+    "sha256": "bf9d0eaae4f07c5ef68d234b772d4f3f297058bb363d21fc4377970817669ca9",
+    "recorded": "2026-10-25"
+  }
+]

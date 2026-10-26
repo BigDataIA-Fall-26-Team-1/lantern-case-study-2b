@@ -6,6 +6,7 @@ import zipfile
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -132,7 +133,8 @@ TRIAGED = {"DELTA": "unfunded_commitments", "ECHO": "custom_tags", "FOXTROT": "n
 
 def _outputs_in_temp_repo(t, triage=True):
     root = Path(t)
-    shutil.copy(ROOT / "params.yaml", root / "params.yaml")
+    p = paths.load_params(ROOT); p["data"]["use_fixture"] = True      # tests always run on the fixture
+    (root / "params.yaml").write_text(yaml.safe_dump(p))
     shutil.copytree(ROOT / "data" / "fixture", root / "data" / "fixture")
     B = pipeline.run_baseline(root / "data" / "fixture" / f"{paths.FIXTURE_RELEASE}_bdc", 0.01)
     report.write_outputs(B["kept"], B["rec"], B["diag"], B["log"], root, P)

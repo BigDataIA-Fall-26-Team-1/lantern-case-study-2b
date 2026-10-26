@@ -1,0 +1,7 @@
+[core]
+    remote = public
+['remote "public"']
+    url = https://lantern-cs2b-team1-2026.s3.us-east-2.amazonaws.com/cs2b
+['remote "store"']
+    url = s3://lantern-cs2b-team1-2026/cs2b
+    region = us-east-2

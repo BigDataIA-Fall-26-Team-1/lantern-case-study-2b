@@ -1,11 +1,11 @@
 # Lab 2B / Case Study 2B parameters. Every notebook and script reads this file.
-release: "2026_08"            # your team's assigned release (Case Study 2B, Section 4)
+release: "2026q1"            # your team's assigned release (Case Study 2B, Section 4)
 data:
-  use_fixture: true           # start offline on the synthetic fixture; set false after notebook 02
+  use_fixture: false           # start offline on the synthetic fixture; set false after notebook 02
   raw_dir: data/raw
   fixture_dir: data/fixture
 sec:
-  user_agent: "Your Name your.email@northeastern.edu"   # the SEC requires a name and an email
+  user_agent: "Pranav Waghmare waghmare.pr@northeastern.edu"   # the SEC requires a name and an email
   base_url: "https://www.sec.gov/files/datastandardsinnovation/data/business-development-company-bdc-data-sets/"
 reconcile:
   tolerance: 0.01             # admit a filing when |holdings - filed| / filed <= tolerance
