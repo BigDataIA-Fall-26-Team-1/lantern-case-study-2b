@@ -48,4 +48,18 @@ def rule_category_member(h: pd.DataFrame):
             "identifier is an XBRL category member ('First Lien Secured Debt [Member]'): a subtotal, not an investment")
 
 
-TEAM_RULES = [rule_jv_subsidiary, rule_range_axis, rule_category_member, rule_totals_v2, clean.rule_cash]
+# PennantPark lists its JV's (PennantPark Senior Loan Fund, PSSL) loans with no subsidiary axis.
+# Its own holdings start "Investments in ..."; the JV schedule starts with the instrument type
+# and then "Issuer Name" (e.g. "First Lien Secured Debt Issuer Name ...").
+JV_SCHEDULE = (r"^\s*(?:first lien|second lien|equity securities|subordinated debt|preferred|common)\b"
+               r"[^|]*?\bissuer name\b")
+
+
+def rule_jv_schedule_style(h: pd.DataFrame):
+    """JV portfolio rows that carry no subsidiary axis, recognised by the filer's JV-schedule identifier style."""
+    return (h["identifier"].str.contains(JV_SCHEDULE, case=False, regex=True, na=False),
+            "JV schedule row without a subsidiary axis (PennantPark PSSL style: '<instrument> Issuer Name ...')")
+
+
+TEAM_RULES = [rule_jv_subsidiary, rule_jv_schedule_style, rule_range_axis, rule_category_member,
+              rule_totals_v2, clean.rule_cash]

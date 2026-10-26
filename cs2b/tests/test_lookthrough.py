@@ -241,3 +241,14 @@ def test_rule_category_member_drops_categories_not_borrowers():
                    ("Rental Equipment Investment Co (Revolver) [Member]", None, None, None, None)])
     drop, _ = rules.rule_category_member(h)
     assert drop.tolist() == [True, True, False, False]
+
+
+
+def test_rule_jv_schedule_style_drops_pssl_rows_not_own_holdings():
+    from lookthrough import rules
+    h = _holdings([("Equity Securities Issuer Name Wash & Wax Group, LP - Common Equity Acquisition 04/30/25",
+                    None, None, None, None),                                       # PennantPark 0001193125-26-021227, PSSL schedule
+                   ("Investments in Controlled, Affiliated Portfolio Companies Common Equity Issuer Name "
+                    "AKW Holdings Limited - Class A", None, None, None, None)])     # PennantPark's own holding, same filing
+    drop, _ = rules.rule_jv_schedule_style(h)
+    assert drop.tolist() == [True, False]
