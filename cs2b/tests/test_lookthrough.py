@@ -189,3 +189,55 @@ def test_renamed_soi_value_columns_map_by_alias():
     out = to_canonical(soi, colmap)
     assert out.loc[0, "fair_value"] == 100
     assert out.loc[0, "cost"] == 90
+
+
+# ---- Part 2: team cleaning rules (src/lookthrough/rules.py). Real identifiers from 2026q1. ----
+
+def _holdings(rows):
+    """Minimal coalesced-holdings frame with the columns the team rules read."""
+    import pandas as pd
+    cols = ["identifier", "spread", "maturity", "subsidiary", "range"]
+    return pd.DataFrame([dict(zip(cols, r)) for r in rows], columns=cols)
+
+
+def test_rule_totals_v2_keeps_borrowers_named_total():
+    from lookthrough import rules
+    h = _holdings([
+        ("Total Access Elevator, LLC  Term Debt", None, None, None, None),        # Gladstone 0001143513-26-000004, soi_row 64141
+        ("Total Expert Inc. | Growth Capital Loan 2 | Non-Affiliated", None, None, None, None),  # TriplePoint VG, soi_row 161016
+        ("Total Power Limited One", None, None, None, None),                      # MidCap Apollo, soi_row 161044
+        ("Pharmaceuticals PAI Pharma Total Investments First Lien Secured Debt - Revolver S+450, 0.75% Floor "
+         "Maturity Date 02/13/32", 0.045, "2032-02-13", None, None),              # MidCap Apollo, soi_row 150389
+        ("Total Investments at Fair Value", None, None, None, None),              # Lord Abbett PCF, soi_row 161025
+        ("Total Unfunded Portfolio Company Commitments", None, None, None, None), # Jefferies, soi_row 161049
+        ("Total cash and cash equivalents", None, None, None, None),              # Saratoga, soi_row 2816
+    ])
+    drop, _ = rules.rule_totals_v2(h)
+    assert drop.tolist() == [False, False, False, False, True, True, True]
+
+
+def test_rule_jv_subsidiary_drops_jv_portfolio_rows():
+    from lookthrough import rules
+    h = _holdings([("Aerospace & Defense ATS First Lien Senior Secured Loan", 0.0575, "2029-07-12",
+                    "Bain Capital Senior Loan Program, LLC [Member]", None),       # Bain SF 0001193125-26-077703, soi_row 12576
+                   ("Aerospace & Defense ATS First Lien Senior Secured Loan", 0.0575, "2029-07-12", None, None)])
+    drop, _ = rules.rule_jv_subsidiary(h)
+    assert drop.tolist() == [True, False]
+
+
+def test_rule_range_axis_drops_range_bounds():
+    from lookthrough import rules
+    h = _holdings([("First Lien Investments", None, None, None, "Weighted Average"),  # New Mountain 0001496099-26-000008, soi_row 13343
+                   ("First Lien Investments", None, None, None, None)])
+    drop, _ = rules.rule_range_axis(h)
+    assert drop.tolist() == [True, False]
+
+
+def test_rule_category_member_drops_categories_not_borrowers():
+    from lookthrough import rules
+    h = _holdings([("First Lien Secured Debt [Member]", None, None, None, None),          # Lord Abbett PCF
+                   ("Non Controlled Affiliated Investments [Member]", None, None, None, None),  # BCP
+                   ("Accel International Holdings, Inc. (Revolver) [Member]", None, None, None, None),  # Lord Abbett PCF S, soi_row 92537
+                   ("Rental Equipment Investment Co (Revolver) [Member]", None, None, None, None)])
+    drop, _ = rules.rule_category_member(h)
+    assert drop.tolist() == [True, True, False, False]

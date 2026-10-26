@@ -1,0 +1,8 @@
+run,filings_admitted,filings_attempted,share_of_filings,share_of_dollars
+"kit rules (rule_totals, rule_cash)",72,171,0.421,0.242
+all team rules,77,171,0.45,0.262
+without rule_jv_subsidiary,73,171,0.427,0.243
+without rule_range_axis,77,171,0.45,0.262
+without rule_category_member,77,171,0.45,0.262
+without rule_totals_v2,76,171,0.444,0.262
+without rule_cash,77,171,0.45,0.238
