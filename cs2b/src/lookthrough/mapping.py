@@ -13,6 +13,7 @@ CANONICAL = {
     "maturity": "InvestmentMaturityDate",
     "pik_rate": "InvestmentInterestRatePaidInKind",
     "pct_net_assets": "InvestmentOwnedPercentOfNetAssets",
+    
 }
 # labels the SEC readme presets (fallback if TAG lacks a label)
 PRESET = {
@@ -25,6 +26,12 @@ PRESET = {
     "pik_rate": "Investment, Interest Rate, Paid in Kind",
     "pct_net_assets": "Investment Owned, Net Assets, Percentage",
 }
+
+ALIASES = {
+    "fair_value": {"Initial fair value of Investment"},
+    "cost": {"Adjusted cost basis"},
+}
+
 AXES = {"identifier": "Investment, Identifier Axis",
         "investment_type": "Investment Type Axis",
         "industry": "Industry Sector Axis",
@@ -45,7 +52,7 @@ def map_soi_columns(soi_columns, tag: pd.DataFrame) -> dict:
             labels.setdefault(r.tag, set()).add(r.tlabel)
     colmap = {}
     for field, t in CANONICAL.items():
-        wanted = labels.get(t, set()) | {PRESET[field]}
+        wanted = labels.get(t, set()) | {PRESET[field]} | ALIASES.get(field, set())
         cols = [c for c in soi_columns if c in wanted]
         if cols:
             colmap[field] = cols
