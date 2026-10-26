@@ -36,7 +36,7 @@ fair value $20,114,000.
 **Test.** `test_rule_jv_subsidiary_drops_jv_portfolio_rows`.
 
 ### 2. `rule_jv_schedule_style`: JV rows with no subsidiary axis (PennantPark)
-**Artifact.** PennantPark lists the loans of its JV, PennantPark Senior Loan Fund (PSSL), with no
+**Artifact.** PennantPark lists the loans of its JV, its joint ventures (PennantPark Senior Secured Loan Fund, PSSL, for PFLT; PennantPark Senior Loan Fund, PSLF, for PNNT), with no
 subsidiary member, so rule 1 cannot see them. The two schedules use different identifier styles:
 PennantPark's own holdings start "Investments in ..."; the PSSL rows start with the instrument
 type and then "Issuer Name" (for example "Equity Securities Issuer Name Wash & Wax Group, LP - ...").
@@ -48,8 +48,20 @@ facts do not record which report they belong to.
 In 0001193125-26-021227, 117 rows ($1,265.9m), the same 117 Part 1 found against the filing.
 **Effect.** Without it, 77 filings are admitted instead of 79. PennantPark Investment's 10-Q
 (0001193125-26-042780) improves from +141.5% to +30.1% but is still not admitted (Part 3 triage).
-**Not yet verified.** The 171 rows in 0001193125-26-042778 and 127 in 0001193125-26-042780 match
-by pattern and reconciliation, not yet by a check against those filings.
+**Verified against the filings (26 Oct 2026).** In both 10-Qs the dropped rows sit in the JV listing
+in the notes, not in the BDC's own schedule, and the BDC's stake appears in its own schedule:
+- PennantPark Floating Rate 0001193125-26-042778 (JV: PennantPark Senior Secured Loan Fund, PSSL):
+  Beacon Behavioral Support Services (FV 24,965), GGG MIDCO (24,511) and NORA Acquisition (20,375)
+  are in "listing of PSSL's individual investments as of December 31, 2025"; PFLT's own schedule
+  holds PSSL Fund I first lien 237,650 and common equity 72,690, and Fund II first lien 39,375 and
+  common equity 16,857. The schedule's Total Investments, $2,605,347k, equals the filed total in NUM.
+- PennantPark Investment 0001193125-26-042780 (JV: PennantPark Senior Loan Fund, PSLF): Sigma
+  Defense Systems (26,563), Blackhawk Industrial Distribution (24,675) and Beacon Behavioral Support
+  Services (24,545) are in "listing of PSLF's individual investments as of December 31, 2025". The
+  note's PSLF summary gives total investments of $1,357,342k, equal to the $1,357.3m this rule drops
+  from the filing. PNNT's own schedule holds PSLF subordinated debt 140,287 and common equity 59,767.
+- The same borrowers also appear in each BDC's own schedule at different, smaller amounts (for
+  example PNNT's own Sigma Defense Systems line: par 11,599, FV 11,483), so these are distinct lines.
 **Test.** `test_rule_jv_schedule_style_drops_pssl_rows_not_own_holdings` (keeps PennantPark's own
 "Investments in ... Issuer Name AKW Holdings Limited" holding).
 
