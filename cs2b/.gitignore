@@ -2,6 +2,10 @@
 __pycache__/
 .ipynb_checkpoints/
 data/raw/
-outputs/
+outputs/*
+!outputs/panel/
+outputs/panel/*
+!outputs/panel/*.dvc
+!outputs/panel/.gitignore
 reports/*.png
 *.zip

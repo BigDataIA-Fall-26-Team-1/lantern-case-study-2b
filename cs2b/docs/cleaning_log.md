@@ -121,3 +121,16 @@ gap and are triaged in Part 3.
 | Values on custom tags | 5,178 holdings with no fair value in SOI, in 124 filings | Recovering them from NUM is a stretch goal |
 | Unfunded commitments | 5,431 holdings with negative fair value (-$409.8m, 109 filings); 6,302 at exactly 0 | They are in the schedule, so they stay in the sum; filers that net differently are triaged in Part 3 |
 | Affiliate and control | 0 holdings carry an affiliation; in this release the type,
+
+
+### rule_issuer_subtotals (added in Part 3)
+
+**Artifact:** some filers tag a company-level subtotal row with an identifier, so it looks like a
+holding and the company is counted twice. Found in Part 3 triage: in Ares Capital
+(0001287750-26-000006), 21 such rows ($4,479m) closed the $4,614m gap to within 1%; Ares Strategic
+Income (0001918712-26-000018) showed the same pattern. `rule_totals_v2` misses them because they never
+say "Total". **Rule:** drop a holding when at least 2 other holdings' identifiers extend its name and
+its fair value equals their sum within 0.5%; the sum guard keeps real borrowers whose names happen to
+prefix others. **Rows affected:** 184 holdings across the release. **Example:** 0001287750-26-000006 / soi_row 14469
+(Ares Capital). **Effect:** Ares Capital and Ares Strategic Income admitted; dollar coverage 27.0% to
+38.0% (filings 79 to 82). **Test:** `test_rule_issuer_subtotals_drops_subtotal_only`.
