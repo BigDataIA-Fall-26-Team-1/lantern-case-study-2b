@@ -1,6 +1,6 @@
 # Triage of non-admitted filings
 
-92 of 171 attempted filings were not admitted ($393,607.7m of $538,863.9m filed fair value).
+89 of 171 attempted filings were not admitted ($333,975.1m of $538,863.9m filed fair value).
 
 Evidence: `reports/p3_gap_evidence.csv` (simple causes), `reports/p3_gap_evidence2.csv` (extra axes, alternative totals), `reports/p3_gap_evidence3.csv` (NUM comparison, issuer subtotals). Scripts: `scripts/p3b_gap_evidence.py`, `scripts/p3c_deep_evidence.py`, `scripts/p3d_num_and_subtotals.py`, `scripts/p3e_triage.py`.
 
@@ -27,22 +27,23 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 | Category | Filings | Filed fair value |
 |---|---:|---:|
-| other | 42.0 | $179,302.0m |
-| custom_tags | 22.0 | $122,182.4m |
-| totals_counted | 16.0 | $85,511.7m |
+| other | 46.0 | $268,582.5m |
+| custom_tags | 21.0 | $42,214.0m |
+| totals_counted | 9.0 | $15,363.2m |
 | no_filed_total | 7.0 | $0.0m |
 | unfunded_commitments | 3.0 | $5,927.8m |
 | no_identified_holdings | 2.0 | $683.9m |
+| cash_lines | 1.0 | $1,203.6m |
 
 ## Filings
 
 ### BLACKSTONE PRIVATE CREDIT FUND (0001803498-26-000014, 10-K)
 
 - Gap: +8.42%; holdings $89,123.7m (2005); filed $82,199.3m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +2.8% more than our SOI holdings; 0 holdings have no SOI fair value.
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +2.8%), but exceed its reported total by $6,924.4m (+8.4%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `BCRED Emerald JV LP - LP Interest`, fair value $1,678.7m, SOI rows 96758
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### BLUE OWL CREDIT INCOME CORP. (0001812554-26-000011, 10-K)
 
@@ -52,14 +53,6 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 - **Example:** `Associations, Inc. | First lien senior secured loan | Non-Affiliated Issuer`, fair value $535.8m, SOI rows 95510
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
-### ARES CAPITAL CORP (0001287750-26-000006, 10-K)
-
-- Gap: +15.65%; holdings $34,098.7m (1874); filed $29,484.8m
-- **Category:** `totals_counted`
-- **Evidence:** 21 holdings ($4,479.4m) equal the sum of the holdings whose identifiers extend their names; the gap is $4,613.9m. Issuer-level subtotals carry an identifier.
-- **Example:** `ADG, LLC, GEDC Equity, LLC and RC IV GEDC Investor LLC`, $58.5m, SOI rows 14880, equal to its 4 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
-
 ### HPS CORPORATE LENDING FUND (0001628280-26-020206, 10-K)
 
 - Gap: +5.95%; holdings $26,844.9m (1092); filed $25,337.4m
@@ -68,19 +61,11 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 - **Example:** `Blazing Star Shields Direct Parent, LLC 1 | Non-Affiliated Issuer`, fair value $485.9m, SOI rows 97204
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
-### ARES STRATEGIC INCOME FUND (0001918712-26-000018, 10-K)
-
-- Gap: +2.30%; holdings $22,002.8m (1227); filed $21,508.6m
-- **Category:** `totals_counted`
-- **Evidence:** 3 holdings ($494.2m) equal the sum of the holdings whose identifiers extend their names; the gap is $494.2m. Issuer-level subtotals carry an identifier.
-- **Example:** `ADLP LLC`, $391.0m, SOI rows 92913, equal to its 2 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
-
 ### BLUE OWL CAPITAL CORP (0001655888-26-000010, 10-K)
 
-- Gap: +15.87%; holdings $19,085.4m (639); filed $16,470.9m
+- Gap: +11.18%; holdings $18,312.0m (634); filed $16,470.9m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $2,614.5m (+15.9%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +4.2%), but exceed its reported total by $1,841.1m (+11.2%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `Wingspire Capital Holdings LLC | Specialty finance equity investment | Affiliated`, fair value $607.3m, SOI rows 66757
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
@@ -88,9 +73,9 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 - Gap: -5.87%; holdings $14,753.8m (732); filed $15,674.5m
 - **Category:** `custom_tags`
-- **Evidence:** We are short by $920.7m; 26 holdings have no SOI fair value and NUM has 25 custom-tag fair value facts.
+- **Evidence:** NUM has $252.9m of identifier-level fair value the SOI lacks: $252.9m on identifiers absent from the SOI, and $0.0m for 26 SOI holdings with no fair value.
 - **Example:** `Equity and Other - 0.7% United States - 0.1% Common Stock - 0.1% SDB HOLDCO, LLC (dba Spec`, fair value n/a, SOI rows 108319;108320
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### BLUE OWL TECHNOLOGY FINANCE CORP. (0001747777-26-000012, 10-K)
 
@@ -102,19 +87,11 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### FS KKR CAPITAL CORP (0001628280-26-011734, 10-K)
 
-- Gap: +48.38%; holdings $19,301.8m (735); filed $13,008.6m
+- Gap: +48.11%; holdings $19,267.0m (733); filed $13,008.6m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $6,293.2m (+48.4%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.2%), but exceed its reported total by $6,258.4m (+48.1%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `Credit Opportunities Partners JV, LLC | Credit Opportunities Partners JV, LLC`, fair value $1,967.9m, SOI rows 23780
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
-
-### GOLUB CAPITAL BDC, INC. (0001476765-26-000012, 10-Q)
-
-- Gap: +2.11%; holdings $8,821.6m (1792); filed $8,639.2m
-- **Category:** `totals_counted`
-- **Evidence:** 5 holdings ($106.2m) equal the sum of the holdings whose identifiers extend their names; the gap is $182.4m. Issuer-level subtotals carry an identifier.
-- **Example:** `Bayside Opco, LLC`, $35.0m, SOI rows 18362, equal to its 5 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
 
 ### NORTH HAVEN PRIVATE INCOME FUND LLC (0001193125-26-096532, 10-K/A)
 
@@ -126,19 +103,19 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### PROSPECT CAPITAL CORP (0001287032-26-000045, 10-Q)
 
-- Gap: +60.69%; holdings $10,350.7m (275); filed $6,441.5m
-- **Category:** `totals_counted`
-- **Evidence:** Issuer-level subtotals ($3,540.3m, 15 rows) explain at least half of the $3,909.2m gap.
-- **Example:** `Belnick, LLC (d/b/a The Ubique Group)`, $76.3m, SOI rows 18631;18632, equal to its 2 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
+- Gap: +5.73%; holdings $6,810.4m (260); filed $6,441.5m
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +52.0%), but exceed its reported total by $368.9m (+5.7%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Example:** `National Property REIT Corp. | Residential Real Estate Investment Trusts (REITs) / Consume`, fair value $652.6m, SOI rows 49560
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### BLUE OWL TECHNOLOGY INCOME CORP. (0001869453-26-000017, 10-K)
 
-- Gap: +2.28%; holdings $6,348.5m (452); filed $6,207.1m
-- **Category:** `totals_counted`
-- **Evidence:** A single holding ($145.4m) equals the gap of $141.4m.
+- Gap: +1.29%; holdings $6,286.9m (451); filed $6,207.1m
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.9%), but exceed its reported total by $79.8m (+1.3%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `IRI Group Holdings, Inc. (f/k/a Circana Group, L.P. (f/k/a The NPD Group, L.P.)), First li`, fair value $145.4m, SOI rows 135030
-- **Fix or reason:** None yet: one filing, verify before writing a rule.
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### MONROE CAPITAL INCOME PLUS CORP (0001742313-26-000013, 10-K)
 
@@ -150,9 +127,9 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### MAIN STREET CAPITAL CORP (0001396440-26-000016, 10-K)
 
-- Gap: +14.11%; holdings $6,297.0m (750); filed $5,518.1m
+- Gap: +7.94%; holdings $5,956.3m (737); filed $5,518.1m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $778.8m (+14.1%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +5.7%), but exceed its reported total by $438.1m (+7.9%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `MSC Adviser I, LLC | Member Units`, fair value $255.0m, SOI rows 49266
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
@@ -191,18 +168,18 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### SIXTH STREET SPECIALTY LENDING, INC. (0001193125-26-048664, 10-K)
 
 - Gap: +1.75%; holdings $3,406.0m (223); filed $3,347.3m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +15.4% more than our SOI holdings; 6 holdings have no SOI fair value.
-- **Example:** `Debt Investments Education Astra Acquisition Corp. Investment Second-lien loan ($40,804 pa`, fair value n/a, SOI rows 25186;25187
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Category:** `totals_counted`
+- **Evidence:** A single holding ($76.7m) equals the gap of $58.7m.
+- **Example:** `Debt Investments Internet Services EDB Parent, LLC Investment First-lien loan ($76,729 par`, fair value $76.7m, SOI rows 26115;26116
+- **Fix or reason:** None yet: one filing, verify before writing a rule.
 
 ### GOLDMAN SACHS BDC, INC. (0001193125-26-077458, 10-K)
 
-- Gap: -6.65%; holdings $3,044.8m (527); filed $3,261.7m
+- Gap: -6.65%; holdings $3,044.8m (526); filed $3,261.7m
 - **Category:** `custom_tags`
-- **Evidence:** We are short by $217.0m; 3 holdings have no SOI fair value and NUM has 58 custom-tag fair value facts.
+- **Evidence:** NUM has $71.4m of identifier-level fair value the SOI lacks: $71.4m on identifiers absent from the SOI, and $0.0m for 3 SOI holdings with no fair value.
 - **Example:** `Investment Debt Investments - 226.3% United Kingdom - 3.5% 1st Lien/Senior Secured Debt - `, fair value n/a, SOI rows 37569
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### MIDCAP FINANCIAL INVESTMENT CORP (0001193125-26-076499, 10-K)
 
@@ -223,10 +200,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### STEPSTONE PRIVATE CREDIT FUND LLC (0001193125-26-128890, 10-K)
 
 - Gap: +28.43%; holdings $3,864.1m (1037); filed $3,008.6m
-- **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $855.5m (+28.4%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
-- **Example:** `Net Assets`, fair value $1,864.5m, SOI rows 140808
-- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
+- **Category:** `custom_tags`
+- **Evidence:** NUM has $334.3m of identifier-level fair value the SOI lacks: $334.3m on identifiers absent from the SOI, and $0.0m for 9 SOI holdings with no fair value.
+- **Example:** `on-Controlled, Non-Affiliated Debt Investments | First Lien Senior Secured | Insurance Bro`, fair value n/a, SOI rows 143012
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### DIAMETER CREDIT CO (0001193125-26-104439, 10-K)
 
@@ -263,10 +240,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### TRINITY CAPITAL INC. (0001193125-26-068600, 10-K)
 
 - Gap: +21.62%; holdings $2,940.8m (542); filed $2,418.1m
-- **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $522.8m (+21.6%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
-- **Example:** `Control and Affiliate Investments`, fair value $174.3m, SOI rows 23003;23004
-- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
+- **Category:** `custom_tags`
+- **Evidence:** NUM has $218.1m of identifier-level fair value the SOI lacks: $218.1m on identifiers absent from the SOI, and $0.0m for 86 SOI holdings with no fair value.
+- **Example:** `Affiliate Investments Autonomy Data Services, Inc.`, fair value n/a, SOI rows 15017
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### BARINGS BDC, INC. (0001379785-26-000009, 10-K)
 
@@ -334,9 +311,9 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### BLUE OWL CAPITAL CORP II (0001655887-26-000010, 10-K)
 
-- Gap: +5.37%; holdings $1,661.2m (289); filed $1,576.5m
+- Gap: +5.22%; holdings $1,658.8m (288); filed $1,576.5m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $84.6m (+5.4%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.1%), but exceed its reported total by $82.3m (+5.2%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `Associations, Inc. | First lien senior secured loan | Non Affiliated`, fair value $47.2m, SOI rows 95508
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
@@ -430,9 +407,9 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### MSC INCOME FUND, INC. (0001535778-26-000026, 10-K)
 
-- Gap: +5.56%; holdings $1,409.6m (507); filed $1,335.4m
+- Gap: +4.69%; holdings $1,398.0m (505); filed $1,335.4m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $74.2m (+5.6%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.8%), but exceed its reported total by $62.7m (+4.7%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `South Coast Terminals Holdings, LLC | Secured Debt 2`, fair value $33.2m, SOI rows 62000
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
@@ -440,7 +417,7 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 - Gap: -97.70%; holdings $30.1m (5); filed $1,309.9m
 - **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +12717.6% more than our SOI holdings; 4 holdings have no SOI fair value.
+- **Evidence:** We are short by $1,279.9m; 4 holdings have no SOI fair value and NUM has 0 custom-tag fair value facts.
 - **Example:** `First Lien Secured Debt`, fair value n/a, SOI rows 109703
 - **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
 
@@ -448,25 +425,25 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 - Gap: +30.07%; holdings $1,584.9m (471); filed $1,218.5m
 - **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +85.6% more than our SOI holdings; 3 holdings have no SOI fair value.
+- **Evidence:** NUM has $205.4m of identifier-level fair value the SOI lacks: $205.4m on identifiers absent from the SOI, and $0.0m for 3 SOI holdings with no fair value.
 - **Example:** `Investments in Non-Controlled, Non-Affiliated Portfolio Companies Common Equity/Partnershi`, fair value n/a, SOI rows 39176;39177
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### PALMER SQUARE CAPITAL BDC INC. (0001193125-26-073362, 10-K)
 
 - Gap: -3.65%; holdings $1,159.7m (264); filed $1,203.6m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +3.8% more than our SOI holdings; 1 holdings have no SOI fair value.
-- **Example:** `Debt Investments First Lien Senior Secured New WPCC Parent, LLC Industry Healthcare Provid`, fair value n/a, SOI rows 25595
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Category:** `cash_lines`
+- **Evidence:** Cash rows dropped by rule_cash ($43.9m) close the gap of $-43.9m.
+- **Example:** `Short-Term Investments Morgan Stanley Liquidity Funds US Dollar Treasury Liquidity Fund - `, fair value $28.8m, SOI rows 61410
+- **Fix or reason:** None: this filer's total includes cash; rule_cash is right for most filers.
 
 ### SILVER POINT SPECIALTY LENDING FUND (0001193125-26-114381, 10-K)
 
 - Gap: +4.23%; holdings $1,233.8m (215); filed $1,183.7m
-- **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $50.1m (+4.2%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
-- **Example:** `on-Controlled/Non-Affiliated Investments 1st Lien/Secured Loans United States of America P`, fair value $28.4m, SOI rows 144511;144512
-- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
+- **Category:** `custom_tags`
+- **Evidence:** NUM has $189.0m of identifier-level fair value the SOI lacks: $189.0m on identifiers absent from the SOI, and $0.0m for 3 SOI holdings with no fair value.
+- **Example:** `Non-Controlled/Non-Affiliated Investments 1st Lien/Secured Loans Canada 1261229 BC LTD Ins`, fair value n/a, SOI rows 144082
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### SARATOGA INVESTMENT CORP. (0001213900-26-002153, 10-Q)
 
@@ -479,10 +456,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### AUDAX PRIVATE CREDIT FUND, LLC (0001193125-26-120299, 10-K)
 
 - Gap: +2.18%; holdings $970.5m (418); filed $949.8m
-- **Category:** `totals_counted`
-- **Evidence:** A single holding ($25.0m) equals the gap of $20.7m.
-- **Example:** `Portfolio Investments APCF SPV I, LLC BANK LOANS: NON-CONTROL/NON-AFFILIATE INVESTMENTS In`, fair value $25.0m, SOI rows 151761;151762
-- **Fix or reason:** None yet: one filing, verify before writing a rule.
+- **Category:** `custom_tags`
+- **Evidence:** NUM has $63.5m of identifier-level fair value the SOI lacks: $63.5m on identifiers absent from the SOI, and $0.0m for 131 SOI holdings with no fair value.
+- **Example:** `80/20 Senior Secured Delayed Draw Term Loan Maturity 12/13/2032`, fair value n/a, SOI rows 92353
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### JOHN HANCOCK COMVEST PRIVATE INCOME FUND (0001193125-26-124287, 10-K)
 
@@ -512,23 +489,23 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 - Gap: -4.57%; holdings $860.4m (266); filed $901.5m
 - **Category:** `custom_tags`
-- **Evidence:** We are short by $41.2m; 10 holdings have no SOI fair value and NUM has 23 custom-tag fair value facts.
+- **Evidence:** NUM has $22.0m of identifier-level fair value the SOI lacks: $22.0m on identifiers absent from the SOI, and $0.0m for 10 SOI holdings with no fair value.
 - **Example:** `Investment Debt Investments - 188.7% United States - 188.7% 1st Lien/Senior Secured Debt -`, fair value n/a, SOI rows 117551
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### VARAGON CAPITAL CORP (0001193125-26-114266, 10-K)
 
 - Gap: -6.59%; holdings $793.4m (342); filed $849.4m
 - **Category:** `custom_tags`
-- **Evidence:** We are short by $55.9m; 0 holdings have no SOI fair value and NUM has 60 custom-tag fair value facts.
+- **Evidence:** NUM has $70.4m of identifier-level fair value the SOI lacks: $70.4m on identifiers absent from the SOI, and $0.0m for 0 SOI holdings with no fair value.
 - **Example:** `Controlled Investments, Industry Investment Funds and Vehicles, Company Senior Direct Lend`, fair value $165.7m, SOI rows 101687
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### LAFAYETTE SQUARE USA, INC. (0001628280-26-020991, 10-K)
 
-- Gap: +6.70%; holdings $842.1m (126); filed $789.2m
+- Gap: +6.66%; holdings $841.8m (125); filed $789.2m
 - **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $52.9m (+6.7%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $52.6m (+6.7%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `Flatworld Intermediate Corporation | First lien senior secured loan 2`, fair value $39.8m, SOI rows 110128
 - **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
@@ -559,10 +536,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### BCP INVESTMENT CORP (0001193125-26-093918, 10-K)
 
 - Gap: +18.21%; holdings $592.2m (214); filed $501.0m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +30.8% more than our SOI holdings; 37 holdings have no SOI fair value.
-- **Example:** `Investments in Affiliate Portfolio Companies Common Stock and Membership Units MMI Holding`, fair value n/a, SOI rows 126260
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +30.8%), but exceed its reported total by $91.2m (+18.2%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Example:** `Investments in Affiliate Portfolio Companies Joint Ventures Series B-Great Lakes Funding I`, fair value $37.5m, SOI rows 126276
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### PARTNERS GROUP LENDING FUND, LLC (0001398344-26-005654, 10-K)
 
@@ -624,17 +601,17 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 - Gap: -100.00%; holdings $0.0m (55); filed $318.6m
 - **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +inf% more than our SOI holdings; 55 holdings have no SOI fair value.
+- **Evidence:** We are short by $318.6m; 55 holdings have no SOI fair value and NUM has 0 custom-tag fair value facts.
 - **Example:** `Accel International Holdings, Inc. (Revolver) [Member]`, fair value n/a, SOI rows 92537
 - **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
 
 ### REMORA CAPITAL CORP (0001213900-26-035841, 10-K)
 
-- Gap: +300.00%; holdings $1,016.0m (170); filed $254.0m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +25.9% more than our SOI holdings; 21 holdings have no SOI fair value.
-- **Example:** `Investments - non-controlled/non-affiliated - First Lien Senior Secured Loan - Aerospace &`, fair value n/a, SOI rows 119549;119550
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- Gap: +213.84%; holdings $797.1m (149); filed $254.0m
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +60.5%), but exceed its reported total by $543.1m (+213.8%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Example:** `Investments - non-controlled/non-affiliated - First Lien Senior Secured Loan`, fair value $254.0m, SOI rows 119854
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### SURO CAPITAL CORP. (0001493152-26-009641, 10-K)
 
@@ -654,19 +631,19 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### INVESTCORP CREDIT MANAGEMENT BDC, INC. (0001193125-26-132860, 10-K)
 
-- Gap: +14.68%; holdings $198.0m (66); filed $172.7m
-- **Category:** `totals_counted`
-- **Evidence:** Issuer-level subtotals ($12.7m, 1 rows) explain at least half of the $25.3m gap.
-- **Example:** `Investment in non-controlled, Affiliated Investment`, $12.7m, SOI rows 117953;117954, equal to its 5 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
+- Gap: +7.34%; holdings $185.3m (65); filed $172.7m
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +6.8%), but exceed its reported total by $12.7m (+7.3%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
+- **Example:** `Non-Controlled/Non-Affiliated Investments, Senior Secured First Lien Debt Investments, Pro`, fair value $10.1m, SOI rows 145944
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### STEELE CREEK CAPITAL CORP (0001213900-26-034052, 10-K)
 
-- Gap: +300.00%; holdings $461.3m (277); filed $115.3m
-- **Category:** `totals_counted`
-- **Evidence:** Our holdings are exactly 4.000x the filed total ($115.3m). Holdings and subtotal rows at several levels (industry, investment type, affiliation category) all carry identifiers, and each level sums to the full portfolio, so 4 levels give 4x. For Star Mountain (0001140361-26-012276) the schedule's total ($375.0m) was confirmed by hand, and UJP Acquisition's warrants (SOI rows 162550;162551, 29,787) reappear as the Food Products subtotal (row 110409) and the warrants-category subtotal (row 165467).
+- Gap: +210.06%; holdings $357.6m (253); filed $115.3m
+- **Category:** `other`
+- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +29.0%), but exceed its reported total by $242.2m (+210.1%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute.
 - **Example:** `Non-controlled/Non-Affiliated Investments -215.8% of Shareholder's Equity`, fair value $115.3m, SOI rows 144977
-- **Fix or reason:** Not fixed: these subtotal identifiers share no common word such as 'Total'; separating them needs the schedule's hierarchy, which the SOI does not carry.
+- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
 
 ### PROSPECT FLOATING RATE & ALTERNATIVE INCOME FUND, INC. (0001521945-26-000013, 10-Q)
 
@@ -687,57 +664,57 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### NEXPOINT CAPITAL, INC. (0001193125-26-134282, 10-K)
 
 - Gap: +97.73%; holdings $74.3m (24); filed $37.6m
-- **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +49.4% more than our SOI holdings; 0 holdings have no SOI fair value.
+- **Category:** `totals_counted`
+- **Evidence:** A single holding ($36.7m) equals the gap of $36.7m.
 - **Example:** `Net Assets`, fair value $36.7m, SOI rows 140809
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** None yet: one filing, verify before writing a rule.
 
 ### MUZINICH BDC, INC. (0001213900-26-035730, 10-K)
 
-- Gap: +3241.36%; holdings $821.2m (63); filed $24.6m
+- Gap: +2509.61%; holdings $641.4m (55); filed $24.6m
 - **Category:** `other`
-- **Evidence:** Our holdings are 33.4x the filed fact ($24.6m), and match the filer's own identifier-level NUM facts: the undimensioned fact is not the portfolio total.
+- **Evidence:** Our holdings are 26.1x the filed fact ($24.6m), and match the filer's own identifier-level NUM facts: the undimensioned fact is not the portfolio total.
 - **Example:** `Investments`, fair value $217.3m, SOI rows 129826
 - **Fix or reason:** None possible from the data set: the filing's total is not tagged as expected.
 
 ### PRINCETON CAPITAL CORP (0001213900-26-036469, 10-K)
 
-- Gap: +70.93%; holdings $24.4m (32); filed $14.3m
-- **Category:** `totals_counted`
-- **Evidence:** Issuer-level subtotals ($12.2m, 1 rows) explain at least half of the $10.1m gap.
-- **Example:** `Control Investments`, $12.2m, SOI rows 101645, equal to its 5 tranches below it
-- **Fix or reason:** Not yet fixed: an issuer-subtotal rule is planned.
+- Gap: -14.54%; holdings $12.2m (31); filed $14.3m
+- **Category:** `custom_tags`
+- **Evidence:** We are short by $2.1m; 26 holdings have no SOI fair value and NUM has 0 custom-tag fair value facts.
+- **Example:** `Control investments - Advantis Certified Staffing Solutions, Inc. - Common Stock - Series `, fair value n/a, SOI rows 101544;101545
+- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
 
 ### KAYNE DL 2021, INC. (0001213900-26-022449, 10-K)
 
-- Gap: +12074.68%; holdings $627.0m (241); filed $5.2m
+- Gap: +7408.06%; holdings $386.7m (227); filed $5.2m
 - **Category:** `custom_tags`
-- **Evidence:** The filer's identifier-level fair value facts in NUM sum to +50.6% more than our SOI holdings; 41 holdings have no SOI fair value.
+- **Evidence:** NUM has $38.7m of identifier-level fair value the SOI lacks: $38.7m on identifiers absent from the SOI, and $0.0m for 41 SOI holdings with no fair value.
 - **Example:** `Building products-Ruff Roofers Buyer, LLC-First lien senior secured delayed draw loan-SOFR`, fair value n/a, SOI rows 98032
-- **Fix or reason:** Not fixed: recovering custom-tag values from NUM is the stretch goal.
+- **Fix or reason:** Not fixed: recovering these values from NUM is the stretch goal.
 
 ### KAYNE ANDERSON BDC, INC. (0001213900-26-022392, 10-K)
 
-- Gap: n/a; holdings $4,311.2m (311); filed n/a
+- Gap: n/a; holdings $2,691.2m (293); filed n/a
 - **Category:** `no_filed_total`
 - **Evidence:** NUM has no undimensioned InvestmentOwnedAtFairValue fact at the period end.
-- **Example:** 311 holdings parsed, nothing to reconcile against.
+- **Example:** 293 holdings parsed, nothing to reconcile against.
 - **Fix or reason:** None possible: the filer reports no total under the standard tag.
 
 ### OXFORD SQUARE CAPITAL CORP. (0001213900-26-024280, 10-K)
 
-- Gap: n/a; holdings $1,317.3m (78); filed n/a
+- Gap: n/a; holdings $1,188.8m (73); filed n/a
 - **Category:** `no_filed_total`
 - **Evidence:** NUM has no undimensioned InvestmentOwnedAtFairValue fact at the period end.
-- **Example:** 78 holdings parsed, nothing to reconcile against.
+- **Example:** 73 holdings parsed, nothing to reconcile against.
 - **Fix or reason:** None possible: the filer reports no total under the standard tag.
 
 ### PHENIXFIN CORP (0001213900-26-013689, 10-Q)
 
-- Gap: n/a; holdings $1,182.6m (98); filed n/a
+- Gap: n/a; holdings $1,006.6m (96); filed n/a
 - **Category:** `no_filed_total`
 - **Evidence:** NUM has no undimensioned InvestmentOwnedAtFairValue fact at the period end.
-- **Example:** 98 holdings parsed, nothing to reconcile against.
+- **Example:** 96 holdings parsed, nothing to reconcile against.
 - **Fix or reason:** None possible: the filer reports no total under the standard tag.
 
 ### FIRST EAGLE PRIVATE CREDIT FUND (0001193125-26-108556, 10-K)
@@ -750,10 +727,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 
 ### MUZINICH CORPORATE LENDING INCOME FUND, INC. (0001213900-26-035737, 10-K)
 
-- Gap: n/a; holdings $554.3m (120); filed n/a
+- Gap: n/a; holdings $514.2m (103); filed n/a
 - **Category:** `no_filed_total`
 - **Evidence:** NUM has no undimensioned InvestmentOwnedAtFairValue fact at the period end.
-- **Example:** 120 holdings parsed, nothing to reconcile against.
+- **Example:** 103 holdings parsed, nothing to reconcile against.
 - **Fix or reason:** None possible: the filer reports no total under the standard tag.
 
 ### SCP PRIVATE CREDIT INCOME BDC LLC (0001193125-26-066960, 10-K)

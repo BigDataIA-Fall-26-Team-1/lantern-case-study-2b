@@ -252,3 +252,17 @@ def test_rule_jv_schedule_style_drops_pssl_rows_not_own_holdings():
                     "AKW Holdings Limited - Class A", None, None, None, None)])     # PennantPark's own holding, same filing
     drop, _ = rules.rule_jv_schedule_style(h)
     assert drop.tolist() == [True, False]
+
+def test_rule_issuer_subtotals_drops_subtotal_only():
+    import pandas as pd
+    from lookthrough.rules import rule_issuer_subtotals
+
+    h = pd.DataFrame({
+        "adsh": ["a"] * 8, "ddate": ["2025-12-31"] * 8,
+        "identifier": ["Acme Corp", "Acme Corp, First Lien", "Acme Corp, Revolver",
+                       "Beta LLC", "Beta LLC, First Lien Term Loan",
+                       "Gamma Inc", "Gamma Inc, First Lien", "Gamma Inc, Second Lien"],
+        "fair_value": [30.0, 20.0, 10.0, 50.0, 50.0, 99.0, 20.0, 10.0]})
+    drop, _ = rule_issuer_subtotals(h)
+    # Acme is a subtotal; Beta has one tranche only; Gamma's value does not match
+    assert drop.tolist() == [True, False, False, False, False, False, False, False]

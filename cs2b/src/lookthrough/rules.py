@@ -60,6 +60,27 @@ def rule_jv_schedule_style(h: pd.DataFrame):
     return (h["identifier"].str.contains(JV_SCHEDULE, case=False, regex=True, na=False),
             "JV schedule row without a subsidiary axis (PennantPark PSSL style: '<instrument> Issuer Name ...')")
 
+def rule_issuer_subtotals(h: pd.DataFrame):
+    """Issuer-level subtotal rows that carry an identifier.
+
+    Observed in Ares Capital (0001287750-26-000006) and Ares Strategic Income
+    (0001918712-26-000018): a row named for the company sits above its tranches,
+    and its fair value equals their sum. Dropped only when at least 2 holdings'
+    identifiers extend its name and the values agree within 0.5%."""
+    drop = pd.Series(False, index=h.index)
+    ok = h["identifier"].notna() & h["fair_value"].notna()
+    for _, g in h[ok].groupby(["adsh", "ddate"], sort=False):
+        g = g.sort_values("identifier")
+        names, fv, idx = g["identifier"].tolist(), g["fair_value"].tolist(), g.index.tolist()
+        for i, name in enumerate(names):
+            j, s, c = i + 1, 0.0, 0
+            while j < len(names) and names[j].startswith(name) and len(names[j]) > len(name):
+                s, c, j = s + fv[j], c + 1, j + 1
+            if c >= 2 and fv[i] and abs(fv[i] - s) <= 0.005 * abs(fv[i]):
+                drop[idx[i]] = True
+    return drop, ("issuer-level subtotal row: its fair value equals the sum of the "
+                  "holdings whose identifiers extend its name")
 
 TEAM_RULES = [rule_jv_subsidiary, rule_jv_schedule_style, rule_range_axis, rule_category_member,
-              rule_totals_v2, clean.rule_cash]
+              rule_totals_v2,
+              rule_issuer_subtotals, clean.rule_cash]

@@ -60,12 +60,14 @@ def classify(r):
                 f"{int(r.rows_without_identifier)} current SOI rows, none with an identifier.",
                 "Rows only on a custom axis (dropped from the SOI) or subtotals.",
                 "None in Part 3: identifiers on a custom axis are not in the SOI.")
-    if r.num_sum_vs_holdings > TOL:
+    hidden = (r.num_missing_m + r.num_for_nan_m) * 1e6
+    if hidden > TOL * r.filed_fv:
         return ("custom_tags",
-                f"The filer's identifier-level fair value facts in NUM sum to {r.num_sum_vs_holdings:+.1%} "
-                f"more than our SOI holdings; {r.missing_fv} holdings have no SOI fair value.",
+                f"NUM has {m(hidden)} of identifier-level fair value the SOI lacks: "
+                f"{m(r.num_missing_m * 1e6)} on identifiers absent from the SOI, and "
+                f"{m(r.num_for_nan_m * 1e6)} for {r.missing_fv} SOI holdings with no fair value.",
                 holding(k, "missing"),
-                "Not fixed: recovering custom-tag values from NUM is the stretch goal.")
+                "Not fixed: recovering these values from NUM is the stretch goal.")
     if r.ratio > 10:
         return ("other",
                 f"Our holdings are {r.ratio:,.1f}x the filed fact ({m(r.filed_fv)}), and match the filer's own "
@@ -75,7 +77,7 @@ def classify(r):
         return ("totals_counted",
                 f"{int(r.n_subtotals)} holdings ({m(r.subtotal_m * 1e6)}) equal the sum of the holdings whose "
                 f"identifiers extend their names; the gap is {m(gap)}. Issuer-level subtotals carry an identifier.",
-                subtotal_example(k) or holding(k), "Not yet fixed: an issuer-subtotal rule is planned.")
+                subtotal_example(k) or holding(k), "Partly fixed: rule_issuer_subtotals drops exact issuer subtotals; the rows left here fail its 0.5% guard.")
     if r.unfunded_closes:
         return ("unfunded_commitments", f"Negative fair values ({m(r.neg_m * 1e6)}) close the gap of {m(gap)}.",
                 holding(k), "None: the filer nets unfunded commitments differently; most filers keep them.")
@@ -94,7 +96,7 @@ def classify(r):
         return ("totals_counted",
                 f"Issuer-level subtotals ({m(r.subtotal_m * 1e6)}, {int(r.n_subtotals)} rows) explain at least half "
                 f"of the {m(gap)} gap.", subtotal_example(k) or holding(k),
-                "Not yet fixed: an issuer-subtotal rule is planned.")
+                "Partly fixed: rule_issuer_subtotals drops exact issuer subtotals; the rows left here fail its 0.5% guard.")
     if r.ratio >= 2 and abs(r.ratio - round(r.ratio)) < 0.005:
         return ("totals_counted",
                 f"Our holdings are exactly {r.ratio:.3f}x the filed total ({m(r.filed_fv)}). Holdings and "

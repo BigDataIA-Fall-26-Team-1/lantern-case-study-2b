@@ -22,6 +22,13 @@ num = num[num["ddate"] == num["period"]]
 num["identifier"] = num["segments"].map(lambda s: parse_segments(s).get("InvestmentIdentifierAxis"))
 n1 = num[num["identifier"].notna() & (num["dimn"] == "1")]
 num_sum = n1.groupby("adsh")["value"].sum()
+hc = B["holdings"][B["holdings"]["is_current"]]
+in_soi = set(zip(hc["adsh"], hc["identifier"]))
+n1_first = n1.groupby(["adsh", "identifier"], as_index=False)["value"].first()
+absent = n1_first[[(a, i) not in in_soi for a, i in zip(n1_first["adsh"], n1_first["identifier"])]]
+num_missing = absent.groupby("adsh")["value"].sum()
+nan_fv = kept[kept["fair_value"].isna()].merge(n1_first, on=["adsh", "identifier"])
+num_for_nan = nan_fv.groupby("adsh")["value"].sum()
 pair = kept.merge(n1.groupby(["adsh", "identifier"], as_index=False)["value"].first(),
                   on=["adsh", "identifier"])
 pair = pair[pair["value"].abs() > 0]
@@ -52,8 +59,9 @@ for r in ex.itertuples():
                  "num_sum_vs_holdings": ns / r.holdings_fv - 1,
                  "soi_over_num_median": soi_over_num.get(r.adsh, float("nan")),
                  "subtotal_m": st / 1e6, "n_subtotals": sn,
-                 "subtotal_closes": abs(r.gap - st) <= TOL * r.filed_fv})
-
+                 "subtotal_closes": abs(r.gap - st) <= TOL * r.filed_fv,
+                 "num_missing_m": num_missing.get(r.adsh, 0.0) / 1e6,
+                 "num_for_nan_m": num_for_nan.get(r.adsh, 0.0) / 1e6})
 ev = pd.DataFrame(rows).sort_values("gap_m", key=abs, ascending=False)
 ev.to_csv("reports/p3_gap_evidence3.csv", index=False)
 pd.set_option("display.width", 250)
