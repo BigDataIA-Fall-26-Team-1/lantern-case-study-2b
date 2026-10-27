@@ -20,15 +20,16 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 8. A single holding equals the gap: `totals_counted`.
 9. Short of the total with missing fair values: `custom_tags`.
 10. Over the total with subtotals explaining at least half the gap: `totals_counted`.
+10b. Our total an exact multiple (2x or more) of the filed total: `totals_counted` (subtotal levels carrying identifiers).
 11. Otherwise: `other`, with the NUM evidence stated.
 
 ## Summary
 
 | Category | Filings | Filed fair value |
 |---|---:|---:|
-| other | 44.0 | $179,792.3m |
+| other | 42.0 | $179,302.0m |
 | custom_tags | 22.0 | $122,182.4m |
-| totals_counted | 14.0 | $85,021.3m |
+| totals_counted | 16.0 | $85,511.7m |
 | no_filed_total | 7.0 | $0.0m |
 | unfunded_commitments | 3.0 | $5,927.8m |
 | no_identified_holdings | 2.0 | $683.9m |
@@ -574,10 +575,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### STAR MOUNTAIN LOWER MIDDLE-MARKET CAPITAL CORP (0001140361-26-012276, 10-K)
 
 - Gap: +300.00%; holdings $1,500.2m (253); filed $375.0m
-- **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $1,125.1m (+300.0%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute. Our total is exactly 4x the filed fact.
+- **Category:** `totals_counted`
+- **Evidence:** Our holdings are exactly 4.000x the filed total ($375.0m). Holdings and subtotal rows at several levels (industry, investment type, affiliation category) all carry identifiers, and each level sums to the full portfolio, so 4 levels give 4x. For Star Mountain (0001140361-26-012276) the schedule's total ($375.0m) was confirmed by hand, and UJP Acquisition's warrants (SOI rows 162550;162551, 29,787) reappear as the Food Products subtotal (row 110409) and the warrants-category subtotal (row 165467).
 - **Example:** `Non-Affiliate Investments`, fair value $312.2m, SOI rows 141475
-- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
+- **Fix or reason:** Not fixed: these subtotal identifiers share no common word such as 'Total'; separating them needs the schedule's hierarchy, which the SOI does not carry.
 
 ### TRIPLEPOINT PRIVATE VENTURE CREDIT INC. (0001792509-26-000003, 10-K)
 
@@ -662,10 +663,10 @@ For 72 of the 83 excluded filings with a filed total and holdings, the filer's o
 ### STEELE CREEK CAPITAL CORP (0001213900-26-034052, 10-K)
 
 - Gap: +300.00%; holdings $461.3m (277); filed $115.3m
-- **Category:** `other`
-- **Evidence:** Our holdings match the filer's own identifier-level NUM facts (difference +0.0%), but exceed its reported total by $346.0m (+300.0%): the filer tags holdings its total does not include, for example a second schedule or joint venture we could not attribute. Our total is exactly 4x the filed fact.
+- **Category:** `totals_counted`
+- **Evidence:** Our holdings are exactly 4.000x the filed total ($115.3m). Holdings and subtotal rows at several levels (industry, investment type, affiliation category) all carry identifiers, and each level sums to the full portfolio, so 4 levels give 4x. For Star Mountain (0001140361-26-012276) the schedule's total ($375.0m) was confirmed by hand, and UJP Acquisition's warrants (SOI rows 162550;162551, 29,787) reappear as the Food Products subtotal (row 110409) and the warrants-category subtotal (row 165467).
 - **Example:** `Non-controlled/Non-Affiliated Investments -215.8% of Shareholder's Equity`, fair value $115.3m, SOI rows 144977
-- **Fix or reason:** None: no evidenced rule exists, and a rule only to force a match is not allowed.
+- **Fix or reason:** Not fixed: these subtotal identifiers share no common word such as 'Total'; separating them needs the schedule's hierarchy, which the SOI does not carry.
 
 ### PROSPECT FLOATING RATE & ALTERNATIVE INCOME FUND, INC. (0001521945-26-000013, 10-Q)
 

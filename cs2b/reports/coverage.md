@@ -15,9 +15,9 @@ Excluded filings by triage category (see `reports/triage.md`):
 
 | Category | Filings | Filed fair value |
 |---|---:|---:|
-| other | 44.0 | $179,792.3m |
+| other | 42.0 | $179,302.0m |
 | custom_tags | 22.0 | $122,182.4m |
-| totals_counted | 14.0 | $85,021.3m |
+| totals_counted | 16.0 | $85,511.7m |
 | no_filed_total | 7.0 | $0.0m |
 | unfunded_commitments | 3.0 | $5,927.8m |
 | no_identified_holdings | 2.0 | $683.9m |

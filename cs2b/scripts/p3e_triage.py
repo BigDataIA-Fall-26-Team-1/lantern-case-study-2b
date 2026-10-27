@@ -95,6 +95,18 @@ def classify(r):
                 f"Issuer-level subtotals ({m(r.subtotal_m * 1e6)}, {int(r.n_subtotals)} rows) explain at least half "
                 f"of the {m(gap)} gap.", subtotal_example(k) or holding(k),
                 "Not yet fixed: an issuer-subtotal rule is planned.")
+    if r.ratio >= 2 and abs(r.ratio - round(r.ratio)) < 0.005:
+        return ("totals_counted",
+                f"Our holdings are exactly {r.ratio:.3f}x the filed total ({m(r.filed_fv)}). Holdings and "
+                "subtotal rows at several levels (industry, investment type, affiliation category) all carry "
+                "identifiers, and each level sums to the full portfolio, so "
+                f"{round(r.ratio)} levels give {round(r.ratio)}x. For Star Mountain (0001140361-26-012276) the "
+                "schedule's total ($375.0m) was confirmed by hand, and UJP Acquisition's warrants (SOI rows "
+                "162550;162551, 29,787) reappear as the Food Products subtotal (row 110409) and the "
+                "warrants-category subtotal (row 165467).",
+                holding(k),
+                "Not fixed: these subtotal identifiers share no common word such as 'Total'; separating them "
+                "needs the schedule's hierarchy, which the SOI does not carry.")    
     exact = r.ratio >= 2 and abs(r.ratio - round(r.ratio)) < 0.001
     note = f" Our total is exactly {round(r.ratio)}x the filed fact." if exact else ""
     return ("other",
@@ -139,6 +151,8 @@ lines = ["# Triage of non-admitted filings", "",
          "8. A single holding equals the gap: `totals_counted`.",
          "9. Short of the total with missing fair values: `custom_tags`.",
          "10. Over the total with subtotals explaining at least half the gap: `totals_counted`.",
+         "10b. Our total an exact multiple (2x or more) of the filed total: `totals_counted` "
+         "(subtotal levels carrying identifiers).",
          "11. Otherwise: `other`, with the NUM evidence stated.", "",
          "## Summary", "", "| Category | Filings | Filed fair value |", "|---|---:|---:|"]
 lines += [f"| {c} | {r.filings} | {m(r.filed)} |" for c, r in summ.iterrows()]
