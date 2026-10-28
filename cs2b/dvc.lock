@@ -210,8 +210,8 @@ stages:
       size: 4109
     - path: scripts/p3e_triage.py
       hash: md5
-      md5: 8d96aada91460cf3fdec3ad9407e6c99
-      size: 12497
+      md5: e6b96e0627878c1888dc4d32eee7988f
+      size: 12660
     - path: src/lookthrough/clean.py
       hash: md5
       md5: 9f4c8b2b6d03bb408b78c1b04ed8a3ae
@@ -258,5 +258,5 @@ stages:
       size: 12158
     - path: reports/triage.md
       hash: md5
-      md5: ef9c887817833308cffd4f745c78e74d
-      size: 51732
+      md5: 3631b964f5ea836a3d31dacccdeab68d
+      size: 51855

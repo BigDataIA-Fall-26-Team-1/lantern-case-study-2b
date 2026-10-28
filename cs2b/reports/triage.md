@@ -12,7 +12,7 @@ For 62 of the 80 excluded filings with a filed total and holdings, the filer's o
 
 1. No filed total in NUM: `no_filed_total`.
 2. No identified holdings: `no_identified_holdings`.
-3. NUM identifier-level facts exceed our holdings by more than 1%: `custom_tags`.
+3. NUM has identifier-level fair value the SOI lacks (identifiers absent from SOI holdings before any rule, plus NUM values for SOI holdings with no fair value) above 1% of the filed total: `custom_tags`.
 4. Our holdings more than 10x the filed fact: `other` (the fact is not the portfolio total).
 5. Issuer-level subtotals close the gap: `totals_counted`.
 6. Removing negative fair values closes the gap: `unfunded_commitments`.
