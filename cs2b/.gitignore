@@ -2,10 +2,10 @@
 __pycache__/
 .ipynb_checkpoints/
 data/raw/
-outputs/*
-!outputs/panel/
-outputs/panel/*
-!outputs/panel/*.dvc
-!outputs/panel/.gitignore
+# Pipeline outputs, tracked by DVC (dvc.yaml / dvc.lock). No wildcard: one line per output.
+outputs/acquire/
+outputs/work/
+outputs/p3_work/
+outputs/panel/holdings.parquet
 reports/*.png
 *.zip

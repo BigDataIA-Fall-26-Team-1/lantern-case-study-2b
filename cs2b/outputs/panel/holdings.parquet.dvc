@@ -1,5 +1,0 @@
-outs:
-- md5: 5402d3dfc237dd3189226298a4590c02
-  size: 1391862
-  hash: md5
-  path: holdings.parquet
