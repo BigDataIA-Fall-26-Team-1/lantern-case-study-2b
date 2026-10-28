@@ -43,8 +43,7 @@ with open(root / P["outputs"]["reports"] / "coverage.json", "w", newline="\n") a
     fh.write(json.dumps(cov, indent=2))
 
 # baseline.pkl: the keys the report stage reads
-B = {"sub": sub, "num": num, "canon": canon, "holdings": hold, "kept": kept, "log": log,
-     "rec": rec, "diag": diag, "soi_adsh": soi_adsh}
+B = {"sub": sub, "kept": kept, "holdings": hold, "rec": rec, "diag": diag}   # P5: only the keys p3b-p3f read
 work = root / "outputs" / "p3_work"
 work.mkdir(parents=True, exist_ok=True)
 pd.to_pickle(B, work / "baseline.pkl")

@@ -4,3 +4,4 @@
 reports/*.csv text eol=lf
 reports/*.md  text eol=lf
 dvc.lock text eol=lf
+*.py text eol=lf

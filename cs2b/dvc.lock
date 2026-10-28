@@ -1,0 +1,262 @@
+schema: '2.0'
+stages:
+  acquire:
+    cmd: python scripts/acquire.py
+    deps:
+    - path: data/manifest.json
+      hash: md5
+      md5: 5acb2c39cecaba275cd4cac5e258927e
+      size: 955
+    - path: data/raw
+      hash: md5
+      md5: a108c8f9090354cea82de14c6ee49534.dir
+      size: 1010481839
+      nfiles: 43
+    - path: scripts/acquire.py
+      hash: md5
+      md5: 63f0527afa1245d460c5d7dc88e0e4f5
+      size: 1673
+    - path: scripts/verify_merge.py
+      hash: md5
+      md5: 7c2510e8bac476a5e4576815600e9c0c
+      size: 1489
+    - path: src/lookthrough/acquire.py
+      hash: md5
+      md5: ffc9b1c3379bdcfcaf1b5f59f1d1c3eb
+      size: 3194
+    - path: src/lookthrough/load.py
+      hash: md5
+      md5: 5da28e3cb0c7d189b743cdd5500f6da6
+      size: 2881
+    - path: src/lookthrough/paths.py
+      hash: md5
+      md5: 778884ab03abb035966d147c64242b83
+      size: 995
+    params:
+      params.yaml:
+        release: 2026q1
+    outs:
+    - path: outputs/acquire/verified.json
+      hash: md5
+      md5: 6b5567d44fac5f55fed03b6414ecbe20
+      size: 515
+  parse:
+    cmd: python scripts/parse.py
+    deps:
+    - path: data/raw/2026q1_bdc
+      hash: md5
+      md5: 8cb99eb6bc8080c1b758a76dc7c766ce.dir
+      size: 488541613
+      nfiles: 10
+    - path: outputs/acquire/verified.json
+      hash: md5
+      md5: 6b5567d44fac5f55fed03b6414ecbe20
+      size: 515
+    - path: scripts/parse.py
+      hash: md5
+      md5: 3e8d60340fec43b0a03a126e5eb74e72
+      size: 1541
+    - path: scripts/workio.py
+      hash: md5
+      md5: fea8b5ca1796cb36b238f8393336d8a3
+      size: 1891
+    - path: src/lookthrough/holdings.py
+      hash: md5
+      md5: 163815a168d1813b0d33c9fa66bed3de
+      size: 1339
+    - path: src/lookthrough/load.py
+      hash: md5
+      md5: 5da28e3cb0c7d189b743cdd5500f6da6
+      size: 2881
+    - path: src/lookthrough/mapping.py
+      hash: md5
+      md5: e6f856b8693278974afaeec42302709e
+      size: 3973
+    - path: src/lookthrough/paths.py
+      hash: md5
+      md5: 778884ab03abb035966d147c64242b83
+      size: 995
+    - path: src/lookthrough/reconcile.py
+      hash: md5
+      md5: 79e46614a8bf6a11ea1aa65188030a19
+      size: 3864
+    params:
+      params.yaml:
+        release: 2026q1
+    outs:
+    - path: outputs/work/parse
+      hash: md5
+      md5: 1aa85de586a2eaef7ec342c4840ef25f.dir
+      size: 15890954
+      nfiles: 10
+  clean:
+    cmd: python scripts/clean.py
+    deps:
+    - path: outputs/work/parse
+      hash: md5
+      md5: 1aa85de586a2eaef7ec342c4840ef25f.dir
+      size: 15890954
+      nfiles: 10
+    - path: scripts/clean.py
+      hash: md5
+      md5: ea9a28da9f9c171c5cdfcd7d5a5439ec
+      size: 1213
+    - path: scripts/workio.py
+      hash: md5
+      md5: fea8b5ca1796cb36b238f8393336d8a3
+      size: 1891
+    - path: src/lookthrough/clean.py
+      hash: md5
+      md5: 9f4c8b2b6d03bb408b78c1b04ed8a3ae
+      size: 1486
+    - path: src/lookthrough/paths.py
+      hash: md5
+      md5: 778884ab03abb035966d147c64242b83
+      size: 995
+    - path: src/lookthrough/rules.py
+      hash: md5
+      md5: 1d70ddf2a4086107f4cea3e34ed804ce
+      size: 4617
+    outs:
+    - path: outputs/work/clean
+      hash: md5
+      md5: a2cd2365b61925c71fe12e8d8a65212d.dir
+      size: 3202639
+      nfiles: 4
+    - path: reports/cleaning_log.csv
+      hash: md5
+      md5: 493856b46fe228e3623f53fac5ff0932
+      size: 1191
+  reconcile:
+    cmd: python scripts/p3a_reconcile.py
+    deps:
+    - path: outputs/work/clean
+      hash: md5
+      md5: a2cd2365b61925c71fe12e8d8a65212d.dir
+      size: 3202639
+      nfiles: 4
+    - path: outputs/work/parse
+      hash: md5
+      md5: 1aa85de586a2eaef7ec342c4840ef25f.dir
+      size: 15890954
+      nfiles: 10
+    - path: scripts/p3a_reconcile.py
+      hash: md5
+      md5: 1393318821e43fcbc28a61d61fdaebba
+      size: 3780
+    - path: scripts/workio.py
+      hash: md5
+      md5: fea8b5ca1796cb36b238f8393336d8a3
+      size: 1891
+    - path: src/lookthrough/paths.py
+      hash: md5
+      md5: 778884ab03abb035966d147c64242b83
+      size: 995
+    - path: src/lookthrough/reconcile.py
+      hash: md5
+      md5: 79e46614a8bf6a11ea1aa65188030a19
+      size: 3864
+    - path: src/lookthrough/report.py
+      hash: md5
+      md5: 6f9259d70c8e7cc26bac8265ec187a1c
+      size: 3102
+    - path: src/lookthrough/tables.py
+      hash: md5
+      md5: 5b732399c36e58635fb42b454a6b1df9
+      size: 1035
+    params:
+      params.yaml:
+        reconcile.tolerance: 0.01
+    outs:
+    - path: outputs/p3_work/baseline.pkl
+      hash: md5
+      md5: 96005dc8108eb20ef2b40cf3d75c5ce6
+      size: 88771498
+    - path: outputs/panel/holdings.parquet
+      hash: md5
+      md5: 5402d3dfc237dd3189226298a4590c02
+      size: 1391862
+    - path: reports/coverage.json
+      hash: md5
+      md5: 89eb57102fee9a7a7322f8a3fee2422e
+      size: 224
+  report:
+    cmd:
+    - python scripts/p3b_gap_evidence.py
+    - python scripts/p3c_deep_evidence.py
+    - python scripts/p3d_num_and_subtotals.py
+    - python scripts/p3e_triage.py
+    deps:
+    - path: data/raw/2026q1_bdc
+      hash: md5
+      md5: 8cb99eb6bc8080c1b758a76dc7c766ce.dir
+      size: 488541613
+      nfiles: 10
+    - path: outputs/p3_work/baseline.pkl
+      hash: md5
+      md5: 96005dc8108eb20ef2b40cf3d75c5ce6
+      size: 88771498
+    - path: scripts/p3b_gap_evidence.py
+      hash: md5
+      md5: 9e78f0058969ac7df8cd3deabf467f1e
+      size: 2832
+    - path: scripts/p3c_deep_evidence.py
+      hash: md5
+      md5: 930f32e0e281459bd507392bd0f535d4
+      size: 4046
+    - path: scripts/p3d_num_and_subtotals.py
+      hash: md5
+      md5: b456c88747db9d78368eff89ba51febd
+      size: 4109
+    - path: scripts/p3e_triage.py
+      hash: md5
+      md5: 8d96aada91460cf3fdec3ad9407e6c99
+      size: 12497
+    - path: src/lookthrough/clean.py
+      hash: md5
+      md5: 9f4c8b2b6d03bb408b78c1b04ed8a3ae
+      size: 1486
+    - path: src/lookthrough/load.py
+      hash: md5
+      md5: 5da28e3cb0c7d189b743cdd5500f6da6
+      size: 2881
+    - path: src/lookthrough/mapping.py
+      hash: md5
+      md5: e6f856b8693278974afaeec42302709e
+      size: 3973
+    - path: src/lookthrough/paths.py
+      hash: md5
+      md5: 778884ab03abb035966d147c64242b83
+      size: 995
+    - path: src/lookthrough/reconcile.py
+      hash: md5
+      md5: 79e46614a8bf6a11ea1aa65188030a19
+      size: 3864
+    params:
+      params.yaml:
+        reconcile.tolerance: 0.01
+    outs:
+    - path: reports/coverage.csv
+      hash: md5
+      md5: f4cab75391408d90694d5ca6c026db5c
+      size: 22692
+    - path: reports/coverage.md
+      hash: md5
+      md5: bc10662b82c5b16ad7ac70ffb5c05177
+      size: 15819
+    - path: reports/p3_gap_evidence.csv
+      hash: md5
+      md5: 07ec88091a50ff0573da3d585c7c7b84
+      size: 11481
+    - path: reports/p3_gap_evidence2.csv
+      hash: md5
+      md5: 1e3262828541041fd84c2584dcd9f252
+      size: 10653
+    - path: reports/p3_gap_evidence3.csv
+      hash: md5
+      md5: 78737829d368165785962edf06ad10a4
+      size: 12158
+    - path: reports/triage.md
+      hash: md5
+      md5: ef9c887817833308cffd4f745c78e74d
+      size: 51732
