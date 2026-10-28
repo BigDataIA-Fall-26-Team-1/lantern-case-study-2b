@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/manifest.json
       hash: md5
-      md5: 5acb2c39cecaba275cd4cac5e258927e
-      size: 955
+      md5: 46ed3f97ee5d326c427023e2b6bfebb7
+      size: 933
     - path: data/raw
       hash: md5
       md5: a108c8f9090354cea82de14c6ee49534.dir
