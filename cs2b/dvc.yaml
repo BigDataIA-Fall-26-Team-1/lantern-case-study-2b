@@ -1,0 +1,102 @@
+# Case Study 2B, Part 5: the pipeline. Run from cs2b/:  dvc pull && dvc repro
+# data/raw is an input restored by `dvc pull` (data/raw.dvc); no stage downloads anything.
+stages:
+  acquire:
+    cmd: python scripts/acquire.py
+    deps:
+      - scripts/acquire.py
+      - scripts/verify_merge.py
+      - src/lookthrough/acquire.py
+      - src/lookthrough/load.py
+      - src/lookthrough/paths.py
+      - data/manifest.json
+      - data/raw
+    params:
+      - release
+    outs:
+      - outputs/acquire/verified.json
+
+  parse:
+    cmd: python scripts/parse.py
+    deps:
+      - scripts/parse.py
+      - scripts/workio.py
+      - outputs/acquire/verified.json
+      - data/raw/2026q1_bdc
+      - src/lookthrough/load.py
+      - src/lookthrough/mapping.py
+      - src/lookthrough/holdings.py
+      - src/lookthrough/reconcile.py
+      - src/lookthrough/paths.py
+    params:
+      - release
+    outs:
+      - outputs/work/parse
+
+  clean:
+    cmd: python scripts/clean.py
+    deps:
+      - scripts/clean.py
+      - scripts/workio.py
+      - outputs/work/parse
+      - src/lookthrough/clean.py
+      - src/lookthrough/rules.py
+      - src/lookthrough/paths.py
+    outs:
+      - outputs/work/clean
+      - reports/cleaning_log.csv:
+          cache: false
+
+  reconcile:
+    cmd: python scripts/p3a_reconcile.py
+    deps:
+      - scripts/p3a_reconcile.py
+      - scripts/workio.py
+      - outputs/work/parse
+      - outputs/work/clean
+      - src/lookthrough/reconcile.py
+      - src/lookthrough/report.py
+      - src/lookthrough/tables.py
+      - src/lookthrough/paths.py
+    params:
+      - reconcile.tolerance
+    outs:
+      - outputs/panel/holdings.parquet
+      - outputs/p3_work/baseline.pkl
+    metrics:
+      - reports/coverage.json:
+          cache: false
+
+  report:
+    cmd:
+      - python scripts/p3b_gap_evidence.py
+      - python scripts/p3c_deep_evidence.py
+      - python scripts/p3d_num_and_subtotals.py
+      - python scripts/p3e_triage.py
+    deps:
+      - scripts/p3b_gap_evidence.py
+      - scripts/p3c_deep_evidence.py
+      - scripts/p3d_num_and_subtotals.py
+      - scripts/p3e_triage.py
+      - outputs/p3_work/baseline.pkl
+      - data/raw/2026q1_bdc
+      - src/lookthrough/clean.py
+      - src/lookthrough/load.py
+      - src/lookthrough/mapping.py
+      - src/lookthrough/reconcile.py
+      - src/lookthrough/paths.py
+    params:
+      - reconcile.tolerance
+    outs:
+      - reports/p3_gap_evidence.csv:
+          cache: false
+      - reports/p3_gap_evidence2.csv:
+          cache: false
+      - reports/p3_gap_evidence3.csv:
+          cache: false
+      - reports/coverage.csv:
+          cache: false
+      - reports/coverage.md:
+          cache: false
+      - reports/triage.md:
+          cache: false

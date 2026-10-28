@@ -1,7 +1,7 @@
-"""P2b: apply the team rules to 2026q1, write the cleaning log, and measure each rule.
+"""P2b: apply the team rules to 2026q1 and measure each rule (coverage with each rule removed).
 
-Writes reports/cleaning_log.csv (rule, artifact, rows affected, example adsh / soi_row) and
-reports/p2_rule_ablation.csv (coverage with all rules, and with each rule removed in turn).
+Writes reports/p2_rule_ablation.csv. (P5: reports/cleaning_log.csv is now written only by the
+pipeline's clean stage, scripts/clean.py; this script prints the log but no longer writes it.)
 Run from cs2b/:  python scripts/p2b_measure_rules.py
 """
 import sys
@@ -28,14 +28,13 @@ def run(rule_list):
 
 kit, rec_kit, _ = run([clean.rule_totals, clean.rule_cash])
 team, rec_team, log = run(rules.TEAM_RULES)
-log.to_csv("reports/cleaning_log.csv", index=False)
 
 lines = [{"run": "kit rules (rule_totals, rule_cash)", **kit}, {"run": "all team rules", **team}]
 for r in rules.TEAM_RULES:
     c, _, _ = run([x for x in rules.TEAM_RULES if x is not r])
     lines.append({"run": f"without {r.__name__}", **c})
 abl = pd.DataFrame(lines)[["run", "filings_admitted", "filings_attempted", "share_of_filings", "share_of_dollars"]]
-abl.to_csv("reports/p2_rule_ablation.csv", index=False)
+abl.to_csv("reports/p2_rule_ablation.csv", index=False, lineterminator="\n")
 
 pd.set_option("display.width", 250); pd.set_option("display.max_colwidth", 60)
 print("Cleaning log:"); print(log.to_string(index=False))
@@ -44,4 +43,4 @@ m = rec_kit[["adsh", "name", "gap_pct", "admitted"]].merge(
     rec_team[["adsh", "gap_pct", "admitted"]], on="adsh", suffixes=("_kit", "_team"))
 print("\nFilings whose admission changed (kit -> team):")
 print(m[m["admitted_kit"] != m["admitted_team"]].round(4).to_string(index=False))
-print("\nwrote reports/cleaning_log.csv and reports/p2_rule_ablation.csv")
+print("\nwrote reports/p2_rule_ablation.csv")

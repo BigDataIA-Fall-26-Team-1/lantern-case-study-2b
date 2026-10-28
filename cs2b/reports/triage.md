@@ -6,7 +6,7 @@ Evidence: `reports/p3_gap_evidence.csv` (simple causes), `reports/p3_gap_evidenc
 
 ## Key finding
 
-For 72 of the 83 excluded filings with a filed total and holdings, the filer's own identifier-level fair value facts in NUM sum to our parsed holdings within 1%, and every matched holding's SOI value equals its NUM value. The parse is faithful; most gaps come from what the filers tag, not from parsing.
+For 62 of the 80 excluded filings with a filed total and holdings, the filer's own identifier-level fair value facts in NUM sum to our parsed holdings within 1%, and every matched holding's SOI value equals its NUM value. The parse is faithful; most gaps come from what the filers tag, not from parsing.
 
 ## Category rules (applied in this order)
 

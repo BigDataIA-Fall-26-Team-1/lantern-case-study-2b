@@ -1,28 +1,54 @@
-"""P3 step 1: reconcile every filing with the team rules and write the outputs."""
+"""P3 step 1 / P5 stage 'reconcile': reconcile every filing to its filed total; write the panel.
+
+Reads the parse and clean stage outputs and runs the kit's filed_totals, reconcile and diagnose
+(pipeline.run_baseline lines 18-21). Writes, and is the only writer of:
+  outputs/panel/holdings.parquet   admitted filings only, PANEL_COLS (as report.write_outputs)
+  reports/coverage.json            DVC metric, with filings_without_soi_rows (needs SUB)
+  outputs/p3_work/baseline.pkl     for the report stage (p3b-p3e) and p3f
+coverage.csv, coverage.md and triage.md are written by p3e (report stage); cleaning_log.csv by clean.
+Run from cs2b/:  python scripts/p3a_reconcile.py
+"""
 import json
 import sys
+from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, "src")
-from lookthrough import paths, pipeline, reconcile, report, rules
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from lookthrough import paths, reconcile, report, tables  # noqa: E402
+from workio import load_frame  # noqa: E402
 
 root = paths.repo_root()
 P = paths.load_params(root)
-rdir = paths.release_dir(P, root)
 tol = float(P["reconcile"]["tolerance"])
 
-B = pipeline.run_baseline(rdir, tol, rules=rules.TEAM_RULES)
-rec, diag, sub = B["rec"], B["diag"], B["sub"]
-report.write_outputs(B["kept"], rec, diag, B["log"], root, P)
+parse_dir, clean_dir = root / "outputs" / "work" / "parse", root / "outputs" / "work" / "clean"
+sub, num, canon, hold = (load_frame(parse_dir, n) for n in ("sub", "num", "canon", "holdings"))
+soi_adsh = set(load_frame(parse_dir, "soi_adsh")["adsh"])
+kept, log = load_frame(clean_dir, "kept"), load_frame(clean_dir, "log")
 
-# coverage.json with the count of SUB filings that have no SOI rows
+filed = reconcile.filed_totals(num, sub)
+rec = reconcile.reconcile(kept, filed, sub, tol, soi_adsh=soi_adsh)
+diag = reconcile.diagnose(rec, kept, num, canon)
+
+# Panel: exactly as report.write_outputs writes it
+admitted = set(rec.loc[rec["admitted"], "adsh"])
+panel = kept[kept["adsh"].isin(admitted)][[c for c in report.PANEL_COLS if c in kept]]
+panel_path = tables.save_table(panel, root / P["outputs"]["panel"] / "holdings")
+
+# coverage.json with the count of SUB filings that have no SOI rows (LF on every OS)
 cov = reconcile.coverage(rec, sub)
-(root / P["outputs"]["reports"] / "coverage.json").write_text(json.dumps(cov, indent=2))
+with open(root / P["outputs"]["reports"] / "coverage.json", "w", newline="\n") as fh:
+    fh.write(json.dumps(cov, indent=2))
+
+# baseline.pkl: the keys the report stage reads
+B = {"sub": sub, "kept": kept, "holdings": hold, "rec": rec, "diag": diag}   # P5: only the keys p3b-p3f read
 work = root / "outputs" / "p3_work"
 work.mkdir(parents=True, exist_ok=True)
 pd.to_pickle(B, work / "baseline.pkl")
 print(json.dumps(cov, indent=2))
+print(f"panel: {len(panel):,} rows, {panel['adsh'].nunique()} filings -> {panel_path.relative_to(root).as_posix()}")
 
 no_soi = sub[~sub["adsh"].isin(rec["adsh"])]
 print(f"\n=== SUB filings with no SOI rows: {len(no_soi)} ===")

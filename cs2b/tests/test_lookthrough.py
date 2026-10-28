@@ -266,3 +266,26 @@ def test_rule_issuer_subtotals_drops_subtotal_only():
     drop, _ = rule_issuer_subtotals(h)
     # Acme is a subtotal; Beta has one tranche only; Gamma's value does not match
     assert drop.tolist() == [True, False, False, False, False, False, False, False]
+
+
+def test_holding_key_keeps_jv_and_range_rows_apart():
+    """P1 extended KEY: the same loan name held by two JVs is two holdings, and a Range Axis
+    bound is its own row; a restated copy (same JV, same value) still merges into one.
+    Modeled on Oaktree 0001414932-26-000005, 'ADB Companies, LLC, First Lien Term Loan 1',
+    source_soi_row 10655 (OCSI Glick JV LLC, 417,000) and 10881 (SLF JV I, 834,000).
+    With the kit's KEY (adsh, ddate, identifier) all four rows collapse into one holding."""
+    from lookthrough.holdings import coalesce_holdings
+    name = "ADB Companies, LLC, First Lien Term Loan 1"
+    df = pd.DataFrame({
+        "soi_row": [10655, 10881, 10882, 20000],
+        "adsh": ["0001414932-26-000005"] * 4,
+        "ddate": ["2025-12-31"] * 4,
+        "identifier": [name] * 4,
+        "subsidiary": ["OCSI Glick JV LLC", "SLF JV I", "SLF JV I", None],
+        "range": [None, None, None, "Minimum"],
+        "fair_value": [417000.0, 834000.0, 834000.0, 0.05],
+    })
+    h = coalesce_holdings(df)
+    assert len(h) == 3, h[["subsidiary", "range", "fair_value", "n_rows"]]
+    assert (h["n_conflicts"] == 0).all()
+    assert sorted(h["fair_value"]) == [0.05, 417000.0, 834000.0]
