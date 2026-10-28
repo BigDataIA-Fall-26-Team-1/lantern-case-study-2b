@@ -134,3 +134,23 @@ its fair value equals their sum within 0.5%; the sum guard keeps real borrowers 
 prefix others. **Rows affected:** 184 holdings across the release. **Example:** 0001287750-26-000006 / soi_row 14469
 (Ares Capital). **Effect:** Ares Capital and Ares Strategic Income admitted; dollar coverage 27.0% to
 38.0% (filings 79 to 82). **Test:** `test_rule_issuer_subtotals_drops_subtotal_only`.
+
+### Custom-tag fair value recovery (stretch goal, tested, not applied)
+
+**Question:** can fair values missing from the SOI be recovered from NUM and re-admit filings?
+**Test:** `scripts/p3g_custom_tag_recovery.py`. 4,591 SOI holdings (116 filings) have no fair value.
+For each, we looked for the filer's own identifier-level NUM fact at the period end, first on the
+standard `InvestmentOwnedAtFairValue` tag, then on any custom tag whose name contains "FairValue"
+(the kit's `custom_fv` filter).
+**Result:** no standard-tag fact exists for any of them. 1,642 matched custom-tag facts, but all on
+15 tags that are not a holding's fair value: unfunded commitments
+(`InvestmentCompanyFinancialCommitmentToInvesteeFairValue` and related), cash
+(`MoneyMarketFundsAtFairValue`, `CashEquivalentsFairValueDisclosure`), realized and unrealized
+gains and transfers, and Level 3 roll-forward items. Filling them in gained 0 filings and lost 9
+that reconcile today (for example Golub Capital BDC, 0001476765-26-000012, +0.88% to +1.58%), taking
+coverage from 82 to 73 filings and 38.0% to 33.4% of dollars. Excluding those 15 tags leaves nothing
+to recover.
+**Decision:** no recovery step. Most SOI holdings without a fair value are unfunded-commitment lines,
+whose values the filers keep out of their totals. The value behind the `custom_tags` triage category
+sits on identifiers absent from the SOI entirely, which cannot enter the panel because they have no
+SOI rows to trace to.
