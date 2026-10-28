@@ -11,7 +11,7 @@ from lookthrough.paths import load_params, release_dir
 rdir = release_dir(load_params())
 B = pd.read_pickle("outputs/p3_work/baseline.pkl")
 rec, kept = B["rec"], B["kept"]
-TOL = 0.01
+TOL = float(load_params()["reconcile"]["tolerance"])   # P5: the admission tolerance from params.yaml
 ex = rec[~rec["admitted"] & rec["filed_fv"].notna() & rec["n_holdings"].gt(0)].copy()
 ex["gap"] = ex["holdings_fv"] - ex["filed_fv"]
 
@@ -63,7 +63,7 @@ for r in ex.itertuples():
                  "num_missing_m": num_missing.get(r.adsh, 0.0) / 1e6,
                  "num_for_nan_m": num_for_nan.get(r.adsh, 0.0) / 1e6})
 ev = pd.DataFrame(rows).sort_values("gap_m", key=abs, ascending=False)
-ev.to_csv("reports/p3_gap_evidence3.csv", index=False)
+ev.to_csv("reports/p3_gap_evidence3.csv", index=False, lineterminator="\n")   # P5: LF on every OS
 pd.set_option("display.width", 250)
 print(f"subtotals close the gap:            {int(ev.subtotal_closes.sum())} of {len(ev)}")
 print(f"NUM holdings sum within 1% of filed: {int(ev.num_sum_vs_filed.abs().le(TOL).sum())}")

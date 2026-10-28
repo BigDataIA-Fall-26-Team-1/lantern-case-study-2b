@@ -6,9 +6,10 @@ import pandas as pd
 sys.path.insert(0, "src")
 from lookthrough import paths, reconcile
 
-TOL = 0.01
 root = paths.repo_root()
 P = paths.load_params(root)
+TOL = float(P["reconcile"]["tolerance"])   # P5: the admission tolerance from params.yaml
+PCT = f"{TOL:.0%}"                         # P5: "1%" in the report text
 rep = root / P["outputs"]["reports"]
 B = pd.read_pickle(root / "outputs" / "p3_work" / "baseline.pkl")
 rec, diag, kept, sub = B["rec"], B["diag"], B["kept"], B["sub"]
@@ -108,7 +109,7 @@ def classify(r):
                 "warrants-category subtotal (row 165467).",
                 holding(k),
                 "Not fixed: these subtotal identifiers share no common word such as 'Total'; separating them "
-                "needs the schedule's hierarchy, which the SOI does not carry.")    
+                "needs the schedule's hierarchy, which the SOI does not carry.")
     exact = r.ratio >= 2 and abs(r.ratio - round(r.ratio)) < 0.001
     note = f" Our total is exactly {round(r.ratio)}x the filed fact." if exact else ""
     return ("other",
@@ -126,11 +127,12 @@ assert set(ex["cat"]) <= set(reconcile.TRIAGE), set(ex["cat"]) - set(reconcile.T
 # coverage.csv with real categories
 cov = rec.copy()
 cov["triage_category"] = cov["adsh"].map(ex.set_index("adsh")["cat"]).fillna("")
-cov.to_csv(rep / "coverage.csv", index=False)
+cov.to_csv(rep / "coverage.csv", index=False, lineterminator="\n")   # P5: LF on every OS
 
 # triage.md
 summ = ex.groupby("cat").agg(filings=("adsh", "size"), filed=("filed_fv", "sum")).sort_values("filings", ascending=False)
 total_f, total_d = len(rec), rec["filed_fv"].sum()
+n_match = int(e3["num_sum_vs_holdings"].abs().le(TOL).sum())   # P5: key finding computed from p3d's evidence
 lines = ["# Triage of non-admitted filings", "",
          f"{len(ex)} of {total_f} attempted filings were not admitted "
          f"({m(ex['filed_fv'].sum())} of {m(total_d)} filed fair value).", "",
@@ -139,13 +141,13 @@ lines = ["# Triage of non-admitted filings", "",
          "Scripts: `scripts/p3b_gap_evidence.py`, `scripts/p3c_deep_evidence.py`, `scripts/p3d_num_and_subtotals.py`, "
          "`scripts/p3e_triage.py`.", "",
          "## Key finding", "",
-         "For 72 of the 83 excluded filings with a filed total and holdings, the filer's own identifier-level "
-         "fair value facts in NUM sum to our parsed holdings within 1%, and every matched holding's SOI value "
+         f"For {n_match} of the {len(e3)} excluded filings with a filed total and holdings, the filer's own identifier-level "
+         f"fair value facts in NUM sum to our parsed holdings within {PCT}, and every matched holding's SOI value "
          "equals its NUM value. The parse is faithful; most gaps come from what the filers tag, not from parsing.", "",
          "## Category rules (applied in this order)", "",
          "1. No filed total in NUM: `no_filed_total`.",
          "2. No identified holdings: `no_identified_holdings`.",
-         "3. NUM identifier-level facts exceed our holdings by more than 1%: `custom_tags`.",
+         f"3. NUM identifier-level facts exceed our holdings by more than {PCT}: `custom_tags`.",
          "4. Our holdings more than 10x the filed fact: `other` (the fact is not the portfolio total).",
          "5. Issuer-level subtotals close the gap: `totals_counted`.",
          "6. Removing negative fair values closes the gap: `unfunded_commitments`.",
@@ -165,9 +167,9 @@ for r in ex.sort_values("filed_fv", ascending=False, na_position="last").itertup
               f"- Gap: {gap}; holdings {m(r.holdings_fv)} ({r.n_holdings}); filed {m(r.filed_fv)}",
               f"- **Category:** `{r.cat}`", f"- **Evidence:** {r.evidence}",
               f"- **Example:** {r.example}", f"- **Fix or reason:** {r.fix}", ""]
-(rep / "triage.md").write_text("\n".join(lines))
+(rep / "triage.md").write_text("\n".join(lines), newline="\n")   # P5: LF on every OS
 
-# coverage.md: summary first, then the kit's table
+# coverage.md: summary first, then the per-filing table
 no_soi = sub[~sub["adsh"].isin(rec["adsh"])]
 a = rec[rec["admitted"]]
 head = ["# Coverage report", "",
@@ -179,9 +181,14 @@ head += [f"- {r.name} ({r.adsh}, {r.form}, period {r.period})" for r in no_soi.i
 head += ["", "Excluded filings by triage category (see `reports/triage.md`):", "",
          "| Category | Filings | Filed fair value |", "|---|---:|---:|"]
 head += [f"| {c} | {r.filings} | {m(r.filed)} |" for c, r in summ.iterrows()]
-body = (rep / "coverage.md").read_text().split("\n")
-table = body[body.index(next(x for x in body if x.startswith("| BDC"))):]
-(rep / "coverage.md").write_text("\n".join(head + ["", "## Per filing", ""] + table))
+# P5: the per-filing table is built here, in the kit's exact format (report.write_outputs),
+# instead of being copied out of the kit's coverage.md
+money = lambda x: "n/a" if pd.isna(x) else f"{x:,.0f}"
+pct = lambda x: "n/a" if pd.isna(x) else f"{x:+.2%}"
+table = ["| BDC | Holdings | Holdings FV | Filed FV | Gap | Admitted |", "|---|---:|---:|---:|---:|---|"]
+table += [f"| {r.name} | {r.n_holdings} | {money(r.holdings_fv)} | {money(r.filed_fv)} | {pct(r.gap_pct)} | {r.admitted} |"
+          for r in cov.itertuples()]
+(rep / "coverage.md").write_text("\n".join(head + ["", "## Per filing", ""] + table + [""]), newline="\n")
 
 print(summ.assign(filed_bn=summ["filed"] / 1e9).drop(columns="filed").round(2).to_string())
 print(f"\nWrote {rep / 'coverage.csv'}, {rep / 'triage.md'}, {rep / 'coverage.md'}")

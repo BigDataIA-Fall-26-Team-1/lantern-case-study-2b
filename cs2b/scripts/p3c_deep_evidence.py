@@ -11,7 +11,7 @@ from lookthrough.paths import load_params, release_dir
 rdir = release_dir(load_params())
 B = pd.read_pickle("outputs/p3_work/baseline.pkl")
 rec, kept = B["rec"], B["kept"]
-TOL = 0.01
+TOL = float(load_params()["reconcile"]["tolerance"])   # P5: the admission tolerance from params.yaml
 ex = rec[~rec["admitted"] & rec["filed_fv"].notna() & rec["n_holdings"].gt(0)].copy()
 ex["gap"] = ex["holdings_fv"] - ex["filed_fv"]
 ids = set(ex["adsh"])
@@ -65,7 +65,7 @@ for r in ex.itertuples():
                  "axes_present": str(present)})
 
 ev = pd.DataFrame(rows).sort_values("gap_m", key=abs, ascending=False)
-ev.to_csv("reports/p3_gap_evidence2.csv", index=False)
+ev.to_csv("reports/p3_gap_evidence2.csv", index=False, lineterminator="\n")   # P5: LF on every OS
 print(f"axis closes the gap:          {int((ev.axis_closes != '').sum())} of {len(ev)}")
 print(f"another tag equals holdings:  {int((ev.alt_total_tags != '').sum())} of {len(ev)}")
 print(f"several undimensioned FV facts: {int(ev.undim_fv_m.str.contains(',').sum())}")

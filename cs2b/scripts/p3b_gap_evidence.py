@@ -4,12 +4,12 @@ import sys
 import pandas as pd
 
 sys.path.insert(0, "src")
-from lookthrough import clean
+from lookthrough import clean, paths
 
 B = pd.read_pickle("outputs/p3_work/baseline.pkl")
 rec, kept, hold = B["rec"], B["kept"], B["holdings"]
 cur = hold[hold["is_current"]]
-TOL = 0.01
+TOL = float(paths.load_params()["reconcile"]["tolerance"])   # P5: the admission tolerance from params.yaml
 ex = rec[~rec["admitted"] & rec["filed_fv"].notna() & rec["n_holdings"].gt(0)]
 
 rows = []
@@ -52,7 +52,7 @@ for r in ex.itertuples():
     })
 
 ev = pd.DataFrame(rows).sort_values("gap_m", key=abs, ascending=False)
-ev.to_csv("reports/p3_gap_evidence.csv", index=False)
+ev.to_csv("reports/p3_gap_evidence.csv", index=False, lineterminator="\n")   # P5: LF on every OS
 
 flags = ["dup_closes", "unfunded_closes", "cash_closes", "big_closes"]
 print(f"=== {len(ev)} excluded filings with holdings and a filed total ===")
