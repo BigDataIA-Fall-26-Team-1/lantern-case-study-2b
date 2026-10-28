@@ -94,6 +94,10 @@ set aside, every other conflict disappears.
 **64,568 holdings, 1 conflict**. Whether these rows belong in the BDC's own total is a Part 2
 decision; the agreement report (`reports/agreement.md`) shows they should not.
 
+**Test:** `test_holding_key_keeps_jv_and_range_rows_apart` (added in Part 5) rebuilds the Oaktree
+example (0001414932-26-000005, source_soi_row 10655 and 10881) and fails if `subsidiary` or `range`
+is removed from `KEY`, just as the alias test in section 3 fails without `ALIASES`.
+
 **The remaining conflict** is in Lord Abbett Private Credit Fund S (`0000930413-26-000842`,
 source_soi_row 3479, 3776, ...): the identifier is a category member,
 "First Lien - Secured Debt [Member]", with no values at all, so it is not a holding and has no
