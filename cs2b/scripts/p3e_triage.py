@@ -147,7 +147,7 @@ lines = ["# Triage of non-admitted filings", "",
          "## Category rules (applied in this order)", "",
          "1. No filed total in NUM: `no_filed_total`.",
          "2. No identified holdings: `no_identified_holdings`.",
-         f"3. NUM identifier-level facts exceed our holdings by more than {PCT}: `custom_tags`.",
+         f"3. NUM has identifier-level fair value the SOI lacks (identifiers absent from SOI holdings before any rule, plus NUM values for SOI holdings with no fair value) above {PCT} of the filed total: `custom_tags`.",   # P5 rule 3: wording matches the code
          "4. Our holdings more than 10x the filed fact: `other` (the fact is not the portfolio total).",
          "5. Issuer-level subtotals close the gap: `totals_counted`.",
          "6. Removing negative fair values closes the gap: `unfunded_commitments`.",
