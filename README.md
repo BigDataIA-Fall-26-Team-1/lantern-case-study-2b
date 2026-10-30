@@ -1,11 +1,11 @@
-# Case Study 2B: Project LANTERN (Look-Through)
+# Case Study 2B: Project LANTERN
 
 DAMG 7245, Fall 2026. **Team 1:** Pranav, Preksha, Pradyumna.
 
 A reconciled holdings panel for the SEC BDC data sets, release **2026q1** (the monthly files 2026_01,
 2026_02 and 2026_03, mostly fiscal-2025 10-Ks), built on the LANTERN starter kit in `cs2b/`.
 
-**Demo video (at most 5 minutes):** _link to be added_
+**Demo video :** 
 
 ## Results
 
