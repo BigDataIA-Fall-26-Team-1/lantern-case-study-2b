@@ -58,6 +58,8 @@ The two columns are added as verified aliases in `ALIASES` in `src/lookthrough/m
 verified but not mapped: adding it to `CANONICAL` breaks the kit's fixture test, and no Part 1
 requirement needs it. It is available for equity and warrants if Part 2 needs it.
 
+Neither column is documented: `bdc_metadata.json` and `readme.htm` in each monthly release describe `Investment Owned, Fair Value` and `Investment Owned, Cost`, the empty columns, and never mention `Initial fair value of Investment` or `Adjusted cost basis`.
+
 ## 4. Dates and periods
 
 | Column | Format in our release | Lost by `norm_date` |
