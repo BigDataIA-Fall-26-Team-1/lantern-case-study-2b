@@ -1,0 +1,30 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-10-30T12:11:19-04:00",
+  "id": "lantern-case-study-2b",
+  "duration": 78,
+  "title": "Project LANTERN, Case Study 2B: a Reconciled BDC Holdings Panel",
+  "authors": "Team 1 (DAMG 7245, Fall 2026)",
+  "summary": "Turn the SEC’s raw BDC data sets into one reconciled holdings panel, traceable to every filing and honest about its coverage",
+  "source": "codelab/lantern-case-study-2b.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "data-engineering"
+  ],
+  "tags": [
+    "bdc",
+    "dvc",
+    "pandas",
+    "reconciliation",
+    "sec",
+    "xbrl"
+  ],
+  "feedback": "https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b",
+  "url": "lantern-case-study-2b"
+}

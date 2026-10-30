@@ -1,11 +1,15 @@
-# Case Study 2B: Project LANTERN (Look-Through)
+# Case Study 2B: Project LANTERN
 
 DAMG 7245, Fall 2026. **Team 1:** Pranav, Preksha, Pradyumna.
 
 A reconciled holdings panel for the SEC BDC data sets, release **2026q1** (the monthly files 2026_01,
 2026_02 and 2026_03, mostly fiscal-2025 10-Ks), built on the LANTERN starter kit in `cs2b/`.
 
-**Demo video (at most 5 minutes):** _link to be added_
+**Codelab :** https://bigdataia-fall-26-team-1.github.io/lantern-case-study-2b/lantern-case-study-2b/
+
+**Live app :** http://13.184.184.213:8501
+
+**Demo video:** TODO
 
 ## Results
 
@@ -19,6 +23,13 @@ A reconciled holdings panel for the SEC BDC data sets, release **2026q1** (the m
 | Self-check (`python -m lookthrough.check`) | 10/10 |
 | Tests (`python tests/run_tests.py`) | 25/25 |
 | Spot checks against the filings (Part 4) | 18 of 18 holdings match; 2 commitment rows; 0 disagreements |
+
+## Architecture
+
+![Architecture: the SEC release through five DVC stages to the reconciled panel, the reports, the DVC remote, GitHub and the app](codelab/img/architecture.png)
+
+Source: [`codelab/architecture.py`](codelab/architecture.py) (Python `diagrams`); regenerate with
+`python codelab/architecture.py` from the repo root.
 
 ## Reproduce (graders)
 
@@ -71,6 +82,30 @@ numpy internals; its content, and every result built from it, is unchanged.
 Parameter: `reconcile.tolerance` (0.01) in `params.yaml`. Metric: `dvc metrics show`. Each output has
 exactly one writing stage. `data/raw` and every `outputs/` file are tracked by DVC; `reports/` stays in Git.
 
+## The app (read-only UI)
+
+A Streamlit app in `cs2b/app/` over the pipeline's outputs: coverage, triage of every excluded filing,
+the panel by BDC with an EDGAR link, the Part 4 spot checks and the Markdown reports. It never runs the
+pipeline, has its own requirements (`cs2b/app/requirements-app.txt`) and venv, and no DVC stage depends
+on it. Live at http://13.184.184.213:8501 (EC2, `us-east-2`). To run it locally from `cs2b/` after
+`dvc pull`:
+
+```powershell
+python -m venv .venv-app; .\.venv-app\Scripts\Activate.ps1
+pip install -r app/requirements-app.txt
+streamlit run app/Home.py
+```
+
+On Linux or macOS:
+
+```bash
+python3 -m venv .venv-app && source .venv-app/bin/activate
+pip install -r app/requirements-app.txt
+streamlit run app/Home.py
+```
+
+Deployment and updates: [`cs2b/docs/app.md`](cs2b/docs/app.md).
+
 ## Where each Part is
 
 | Part | Deliverables |
@@ -81,6 +116,9 @@ exactly one writing stage. `data/raw` and every `outputs/` file are tracked by D
 | 3 Reconciliation, coverage, triage | `cs2b/outputs/panel/holdings.parquet` (DVC), `reports/coverage.csv`, `coverage.md`, `coverage.json`, `triage.md` |
 | 4 Verify the dependency | `cs2b/reports/spot_check.csv`, `reports/dependency_check.md` |
 | 5 Pipeline, tests, economics | `cs2b/dvc.yaml`, `dvc.lock`, `scripts/`, `reports/tests_that_fail.md`, `reports/economics.md` |
+| UI (read-only app) | `cs2b/app/`, `cs2b/docs/app.md` |
+| Stretch: SEC data-set issue | `cs2b/reports/issue_draft.md`, `scripts/bonus_issue_evidence.py`, `reports/issue_evidence.csv` |
+| Codelab | `codelab/lantern-case-study-2b.md` (source), `docs/lantern-case-study-2b/` (claat export, served by GitHub Pages) |
 
 ## Notes
 
@@ -92,3 +130,25 @@ exactly one writing stage. `data/raw` and every `outputs/` file are tracked by D
   code; it regenerates `reports/tests_that_fail.md`.
 - Team pushes to DVC use the `store` remote with keys in `.dvc/config.local` only (never committed):
   `dvc push -r store`.
+
+## Contributions
+
+| Team member | Parts |
+|---|---|
+| Pranav | Part 0 (setup, acquisition, provenance), Part 5 (pipeline, tests, economics), the app and its deployment |
+| Pradyumna | Part 1 (raw parsing and schema mapping), Part 3 (reconciliation, coverage, triage) |
+| Preksha | Part 2 (cleaning rules), Part 4 (verifying against the filings), the SEC data-set issue draft, the Codelab |
+
+
+## AI use
+
+We used an AI assistant (Claude) during this case study. Everything it produced was reviewed, run and
+checked by the team; every number in the reports and the Codelab comes from the pipeline's outputs.
+
+## Attestation
+
+WE ATTEST THAT WE HAVEN'T USED ANY OTHER STUDENTS' WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK.
+
+- Member 1: Preksha Praveen — 33%
+- Member 2: Pradyumna Reddy Cherla — 33%
+- Member 3: Pranav Waghmare — 33%

@@ -1,0 +1,556 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Project LANTERN, Case Study 2B: a Reconciled BDC Holdings Panel</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="lantern-case-study-2b"
+                  title="Project LANTERN, Case Study 2B: a Reconciled BDC Holdings Panel"
+                  environment="web"
+                  feedback-link="https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b">
+    
+      <google-codelab-step label="Overview" duration="5">
+        <p><strong>Project LANTERN, Case Study 2B (Look-Through), turns the SEC&#39;s raw business development company (BDC) data sets into one reconciled holdings panel: every holding of every admitted filing, traceable to its filing and SOI row, adding up to the total the BDC itself reported, and honest about what it covers.</strong></p>
+<h2 is-upgraded>The problem</h2>
+<p>Quanta Capital&#39;s credit team invests across BDCs and needs to see through them to the loans they hold: which companies borrow from which BDCs, on what terms and at what marks. Every quarter each BDC publishes every holding in its schedule of investments, and the SEC turns those schedules into flat files. The data exists, but the numbers cannot be trusted as published: adding up a filing&#39;s holdings gives the wrong total for most BDCs, because the files also contain subtotals, last year&#39;s schedule, joint-venture portfolios, valuation ranges and commitment disclosures.</p>
+<h2 is-upgraded>What we built</h2>
+<p>A pipeline for one SEC release, <code>2026q1</code> (the SEC&#39;s <code>2026_01</code>, <code>2026_02</code> and <code>2026_03</code> files), that:</p>
+<ul>
+<li>downloads the release with a verified manifest and versions it with DVC (Part 0)</li>
+<li>parses the raw tables and maps every column to a canonical field by its XBRL tag (Part 1)</li>
+<li>removes the artifacts that break the totals with seven tested cleaning rules (Parts 2 and 3)</li>
+<li>reconciles each filing to its own reported total, admits those within 1%, and triages every filing it cannot admit (Part 3)</li>
+<li>checks a sample of holdings against the filings by hand (Part 4)</li>
+<li>rebuilds everything with one command, <code>dvc repro</code>, and prices the work (Part 5)</li>
+</ul>
+<h2 is-upgraded>Team</h2>
+<p><strong>Big Data and Intelligent Analytics (DAMG 7245), Fall 2026 · Team 1</strong></p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Team member</p>
+</td><td colspan="1" rowspan="1"><p>Parts</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Pranav Avinash Waghmare</strong></p>
+</td><td colspan="1" rowspan="1"><p>Part 0 (setup, acquisition, provenance), Part 5 (pipeline, tests, economics), the app</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Pradyumna Reddy Cherla</strong></p>
+</td><td colspan="1" rowspan="1"><p>Part 1 (raw parsing and schema mapping), Part 3 (reconciliation, coverage, triage)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Preksha Praveen</strong></p>
+</td><td colspan="1" rowspan="1"><p>Part 2 (cleaning rules), Part 4 (verifying against the filings), the SEC data-set issue draft</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Links</h2>
+<ul>
+<li><strong>Repository: </strong><a href="https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b" target="_blank">github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b</a></li>
+<li><strong>Deployed app: </strong><a href="http://13.184.184.213:8501/" target="_blank">http://13.184.184.213:8501/</a></li>
+<li><strong>Demo video:</strong> TODO</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Architecture" duration="3">
+        <p class="image-container"><img alt="Architecture: five DVC stages from the SEC release to the reconciled panel" src="img/f3fbc82dcae93f1c.png"></p>
+<p>Every stage reads one folder and writes the next. <code>dvc.yaml</code> defines the stages and <code>dvc.lock</code> records the hash of every output.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Stage</p>
+</td><td colspan="1" rowspan="1"><p>Script</p>
+</td><td colspan="1" rowspan="1"><p>Reads</p>
+</td><td colspan="1" rowspan="1"><p>Writes</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>acquire</code></p>
+</td><td colspan="1" rowspan="1"><p>verifies the release</p>
+</td><td colspan="1" rowspan="1"><p><code>data/raw</code> (tracked by <code>data/raw.dvc</code>), <code>data/manifest.json</code></p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/acquire/verified.json</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>parse</code></p>
+</td><td colspan="1" rowspan="1"><p>loads SUB, TAG, NUM and SOI; maps columns by tag; splits periods</p>
+</td><td colspan="1" rowspan="1"><p><code>data/raw/2026q1_bdc</code></p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/work/parse/</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>clean</code></p>
+</td><td colspan="1" rowspan="1"><p>applies <code>TEAM_RULES</code> after coalescing</p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/work/parse/</code></p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/work/clean/</code>, <code>reports/cleaning_log.csv</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>reconcile</code></p>
+</td><td colspan="1" rowspan="1"><p>compares holdings with filed totals; triage evidence</p>
+</td><td colspan="1" rowspan="1"><p>cleaned holdings, NUM</p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/panel/holdings.parquet</code>, <code>outputs/p3_work/</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>report</code></p>
+</td><td colspan="1" rowspan="1"><p>writes coverage and triage</p>
+</td><td colspan="1" rowspan="1"><p>reconcile outputs</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/coverage.csv</code>, <code>coverage.md</code>, <code>coverage.json</code>, <code>triage.md</code></p>
+</td></tr>
+</table>
+<p>The tolerance for admission is a DVC parameter (<code>reconcile.tolerance: 0.01</code>) and coverage is a DVC metric (<code>reports/coverage.json</code>).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Setup and reproduce" duration="10">
+        <p>No AWS credentials are needed: the data is on a public-read S3 remote.</p>
+<h2 is-upgraded>Prerequisites</h2>
+<ul>
+<li>Python 3.11 (3.10 or later works)</li>
+<li>Git</li>
+</ul>
+<h2 is-upgraded>Reproduce</h2>
+<pre><code language="language-bash" class="language-bash">git clone https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b.git
+cd lantern-case-study-2b/cs2b
+python3.11 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+dvc pull
+dvc repro
+PYTHONPATH=src python -m lookthrough.check
+python tests/run_tests.py
+</code></pre>
+<h2 is-upgraded>What you should see</h2>
+<ul>
+<li><code>dvc pull</code> downloads <code>data/raw/</code> (43 files, about 1 GB) and every pipeline output, including <code>outputs/panel/holdings.parquet</code>, from the public remote.</li>
+<li><code>dvc repro</code> reports every stage as unchanged and skips it, because every output already matches <code>dvc.lock</code>.</li>
+<li>The self-check prints <code>10/10 checks pass</code> and the tests print <code>25/25 tests pass</code>.</li>
+<li><code>git status</code> stays clean.</li>
+</ul>
+<p class="image-container"><img alt="dvc repro skipping every stage: every output already matches dvc.lock" src="img/194f53ce1020ed66.png"></p>
+<p>Negative : Do not run notebook 02 or <code>tools/run_notebooks.py</code>: with <code>release: "2026q1"</code> they try to download a ZIP the SEC does not publish (see Part 0).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 0: Acquisition and provenance" duration="5">
+        <h2 is-upgraded>One release from three monthly files</h2>
+<p>The SEC publishes 2026 releases monthly, so our assigned quarter, <code>2026q1</code>, is three ZIPs. <code>scripts/merge_release.py</code> merges them into <code>data/raw/2026q1_bdc</code>, so the kit, the notebooks, the self-check and the grader work unchanged.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Month</p>
+</td><td colspan="1" rowspan="1"><p>Filings</p>
+</td><td colspan="1" rowspan="1"><p>Forms</p>
+</td><td colspan="1" rowspan="1"><p>SOI rows</p>
+</td><td colspan="1" rowspan="1"><p>SOI columns</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2026_01</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>1 10-K/A, 1 10-Q</p>
+</td><td colspan="1" rowspan="1"><p>2,918</p>
+</td><td colspan="1" rowspan="1"><p>47</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2026_02</p>
+</td><td colspan="1" rowspan="1"><p>53</p>
+</td><td colspan="1" rowspan="1"><p>33 10-K, 20 10-Q</p>
+</td><td colspan="1" rowspan="1"><p>70,297</p>
+</td><td colspan="1" rowspan="1"><p>153</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2026_03</p>
+</td><td colspan="1" rowspan="1"><p>123</p>
+</td><td colspan="1" rowspan="1"><p>121 10-K, 2 10-K/A</p>
+</td><td colspan="1" rowspan="1"><p>100,761</p>
+</td><td colspan="1" rowspan="1"><p>223</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>2026q1</strong></p>
+</td><td colspan="2" rowspan="1"><p><strong>178 (176 current)</strong></p>
+</td><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1"><p><strong>173,976</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>258</strong></p>
+</td></tr>
+</table>
+<p>Merge rules: concatenate every table by column name (SOI columns differ between months); keep one copy of any adsh; keep the latest filing per CIK and period; add <code>source_release</code> and <code>source_soi_row</code> so every row still points to the SEC&#39;s original monthly file. <code>scripts/verify_merge.py</code> compares all 8 tables value by value against the monthly files.</p>
+<h2 is-upgraded>Provenance and DVC</h2>
+<ul>
+<li><code>data/manifest.json</code> records the URL, size, SHA-256 and date of each ZIP; <code>verify_manifest</code> returns no mismatches.</li>
+<li><code>data/raw</code> is tracked by DVC (43 files) on S3, with two remotes: <code>public</code> (default, read-only over HTTPS, no keys) and <code>store</code> (for pushing; keys only in <code>.dvc/config.local</code>).</li>
+</ul>
+<pre><code language="language-bash" class="language-bash">python -c &#34;import sys; sys.path.insert(0,&#39;src&#39;); from lookthrough import acquire; print(acquire.verify_manifest(&#39;data/manifest.json&#39;, root=&#39;.&#39;))&#34;
+</code></pre>
+<p>You should see <code>[]</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 1: Raw parsing and schema mapping" duration="8">
+        <p>The kit maps each SOI column to a canonical field through its XBRL tag in TAG. On our release that rule alone fails, and Part 1 fixed two problems.</p>
+<h2 is-upgraded>Fair value and cost under renamed headers</h2>
+<p>In all three monthly files the preset columns <code>Investment Owned, Fair Value</code> and <code>Investment Owned, Cost</code> exist but are empty in every row. The values sit under <code>Initial fair value of Investment</code> and <code>Adjusted cost basis</code>, headers that match no <code>tlabel</code> in the release&#39;s TAG table. Without a fix, no holding has a fair value. Checked against NUM across 171 filings (<code>reports/p1_value_column_check.csv</code>):</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>SOI column</p>
+</td><td colspan="1" rowspan="1"><p>Tag</p>
+</td><td colspan="1" rowspan="1"><p>Match with NUM</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Initial fair value of Investment</p>
+</td><td colspan="1" rowspan="1"><p><code>InvestmentOwnedAtFairValue</code></p>
+</td><td colspan="1" rowspan="1"><p>99.67% (108,631 of 108,992)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Adjusted cost basis</p>
+</td><td colspan="1" rowspan="1"><p><code>InvestmentOwnedAtCost</code></p>
+</td><td colspan="1" rowspan="1"><p>99.69% (101,545 of 101,857)</p>
+</td></tr>
+</table>
+<p>Fix: an <code>ALIASES</code> map in <code>src/lookthrough/mapping.py</code>, tested by <code>test_renamed_soi_value_columns_map_by_alias</code>. This is also the data-set issue we documented for the SEC (<code>reports/issue_draft.md</code>).</p>
+<h2 is-upgraded>A holding key that keeps joint ventures apart</h2>
+<p>The kit coalesces rows on (filing, date, identifier). Some BDCs list the same loan once for each joint venture that holds it, so different holdings were merged and only the first value kept. Adding the <code>Investment Company, Nonconsolidated Subsidiary Axis</code> and the <code>Range Axis</code> to the key changed <strong>63,862 holdings with 458 conflicts into 64,568 holdings with 1 conflict</strong>.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Measure</p>
+</td><td colspan="1" rowspan="1"><p>Value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Current-period SOI rows</p>
+</td><td colspan="1" rowspan="1"><p>94,508</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Comparative-period rows</p>
+</td><td colspan="1" rowspan="1"><p>76,622</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Current rows without an identifier</p>
+</td><td colspan="1" rowspan="1"><p>22,039</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Filings with SOI rows</p>
+</td><td colspan="1" rowspan="1"><p>171 (5 have none)</p>
+</td></tr>
+</table>
+<p>Full schema: <code>docs/schema.md</code>. Three filings compared with their human-readable schedules: <code>reports/agreement.md</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 2: Cleaning the extract" duration="10">
+        <h2 is-upgraded>Survey first, rules second</h2>
+<p><code>scripts/p2a_artifact_survey.py</code> measures every artifact the brief lists, in the current period, with two examples each (<code>reports/p2_artifact_survey.csv</code>). The survey decided which artifacts get a rule:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Artifact</p>
+</td><td colspan="1" rowspan="1"><p>Found</p>
+</td><td colspan="1" rowspan="1"><p>Decision</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Totals and subtotals</p>
+</td><td colspan="1" rowspan="1"><p>the kit&#39;s rule drops 45 holdings, 12 of them borrowers named &#34;Total ...&#34; ($50.3m)</p>
+</td><td colspan="1" rowspan="1"><p>rule <code>rule_totals_v2</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>JV portfolio rows on the subsidiary axis</p>
+</td><td colspan="1" rowspan="1"><p>788 holdings, 10 filings, $4,847.3m</p>
+</td><td colspan="1" rowspan="1"><p>rule <code>rule_jv_subsidiary</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Range-axis rows</p>
+</td><td colspan="1" rowspan="1"><p>534 holdings, 14 filings</p>
+</td><td colspan="1" rowspan="1"><p>rule <code>rule_range_axis</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Category members as identifiers</p>
+</td><td colspan="1" rowspan="1"><p>66 holdings; 12 are categories, 54 are borrowers</p>
+</td><td colspan="1" rowspan="1"><p>rule <code>rule_category_member</code> (categories only)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Comparative rows, restated copies, subtotals with no identifier</p>
+</td><td colspan="1" rowspan="1"><p>76,622 / 7,881 / 13,597 rows</p>
+</td><td colspan="1" rowspan="1"><p>no rule: handled by period split and coalescing</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Affiliate and control</p>
+</td><td colspan="1" rowspan="1"><p>0 holdings carry an affiliation</p>
+</td><td colspan="1" rowspan="1"><p>no rule: the axes sit only on subtotal rows</p>
+</td></tr>
+</table>
+<h2 is-upgraded>The rules</h2>
+<p>All rules live in <code>src/lookthrough/rules.py</code> as <code>TEAM_RULES</code>, with the kit&#39;s contract (a drop mask and a one-line artifact), and run in this order:</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>#</p>
+</td><td colspan="1" rowspan="1"><p>Rule</p>
+</td><td colspan="1" rowspan="1"><p>Example (adsh / soi_row)</p>
+</td><td colspan="1" rowspan="1"><p>Rows</p>
+</td><td colspan="1" rowspan="1"><p>Without it</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_jv_subsidiary</code></p>
+</td><td colspan="1" rowspan="1"><p>0001193125-26-077703 / 12576</p>
+</td><td colspan="1" rowspan="1"><p>788</p>
+</td><td colspan="1" rowspan="1"><p>78 filings, 36.1%</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_jv_schedule_style</code> (PennantPark&#39;s JV rows with no axis)</p>
+</td><td colspan="1" rowspan="1"><p>0001193125-26-021227 / 160;161</p>
+</td><td colspan="1" rowspan="1"><p>415</p>
+</td><td colspan="1" rowspan="1"><p>80 filings, 37.3%</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_range_axis</code></p>
+</td><td colspan="1" rowspan="1"><p>0001628280-26-011734 / 72803</p>
+</td><td colspan="1" rowspan="1"><p>530</p>
+</td><td colspan="1" rowspan="1"><p>no change</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>4</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_category_member</code></p>
+</td><td colspan="1" rowspan="1"><p>0000930413-26-000842 / 76694</p>
+</td><td colspan="1" rowspan="1"><p>12</p>
+</td><td colspan="1" rowspan="1"><p>no change</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_totals_v2</code></p>
+</td><td colspan="1" rowspan="1"><p>0001213900-26-002153 / 2816</p>
+</td><td colspan="1" rowspan="1"><p>31</p>
+</td><td colspan="1" rowspan="1"><p>81 filings, 37.9%</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>6</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_issuer_subtotals</code> (Part 3)</p>
+</td><td colspan="1" rowspan="1"><p>0001287750-26-000006 / 14469</p>
+</td><td colspan="1" rowspan="1"><p>184</p>
+</td><td colspan="1" rowspan="1"><p>79 filings, 27.0%</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>7</p>
+</td><td colspan="1" rowspan="1"><p><code>rule_cash</code> (kit)</p>
+</td><td colspan="1" rowspan="1"><p>0001213900-26-002153 / 2826</p>
+</td><td colspan="1" rowspan="1"><p>34</p>
+</td><td colspan="1" rowspan="1"><p>82 filings, 35.6%</p>
+</td></tr>
+</table>
+<p>Rules 3 and 4 change no coverage number: they exist because those rows are not holdings, and their tests are the evidence. No rule exists only to force a filing to reconcile.</p>
+<h2 is-upgraded>Checked against the filings</h2>
+<p>Rule 2 was confirmed in both PennantPark 10-Qs: the dropped rows sit in the joint venture&#39;s listing in the notes, and in PennantPark Investment (0001193125-26-042780) the note&#39;s JV total, $1,357,342k, equals the $1.357bn the rule drops.</p>
+<pre><code language="language-bash" class="language-bash">python tests/run_tests.py
+python scripts/p2b_measure_rules.py
+</code></pre>
+<p>Machine-readable log: <code>reports/cleaning_log.csv</code>. One paragraph per rule: <code>docs/cleaning_log.md</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 3: Reconciliation and coverage" duration="10">
+        <p>Each filing&#39;s cleaned holdings are compared with its filed total, the undimensioned <code>InvestmentOwnedAtFairValue</code> fact in NUM at the period end. A filing is admitted when the gap is within 1%.</p>
+<h2 is-upgraded>Coverage</h2>
+<table>
+<tr><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1"><p>Filings</p>
+</td><td colspan="1" rowspan="1"><p>Filed fair value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Attempted</p>
+</td><td colspan="1" rowspan="1"><p>171</p>
+</td><td colspan="1" rowspan="1"><p>$538.9bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Admitted</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>82 (48.0%)</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>$204.9bn (38.0%)</strong></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>In SUB with no SOI rows (reported separately)</p>
+</td><td colspan="2" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"></td></tr>
+</table>
+<h2 is-upgraded>Triage of the 89 excluded filings</h2>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Category</p>
+</td><td colspan="1" rowspan="1"><p>Filings</p>
+</td><td colspan="1" rowspan="1"><p>Filed fair value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>other</p>
+</td><td colspan="1" rowspan="1"><p>46</p>
+</td><td colspan="1" rowspan="1"><p>$268.6bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>custom_tags</p>
+</td><td colspan="1" rowspan="1"><p>21</p>
+</td><td colspan="1" rowspan="1"><p>$42.2bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>totals_counted</p>
+</td><td colspan="1" rowspan="1"><p>9</p>
+</td><td colspan="1" rowspan="1"><p>$15.4bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>no_filed_total</p>
+</td><td colspan="1" rowspan="1"><p>7</p>
+</td><td colspan="1" rowspan="1"><p>$0.0bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>unfunded_commitments</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>$5.9bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>no_identified_holdings</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>$0.7bn</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>cash_lines</p>
+</td><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>$1.2bn</p>
+</td></tr>
+</table>
+<p>Every excluded filing in <code>reports/triage.md</code> has its gap, evidence, category, an example and the fix or the reason none is possible.</p>
+<h2 is-upgraded>Key finding</h2>
+<p>For 62 of the 80 excluded filings that have holdings and a filed total, the filer&#39;s own identifier-level fair-value facts in NUM sum to our parsed holdings within 1%, and in no filing does the median SOI value differ from its NUM value (<code>scripts/p3d_num_and_subtotals.py</code>, <code>reports/p3_gap_evidence3.csv</code>). Our parse is faithful; most remaining gaps come from what the filers tag (subtotal rows, second schedules, joint ventures), not from parsing.</p>
+<pre><code language="language-bash" class="language-bash">PYTHONPATH=src python -m lookthrough.check
+</code></pre>
+<p class="image-container"><img alt="The self-check: 10 of 10 checks pass" src="img/70df808e7ba64c03.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 4: Verify against the filings" duration="8">
+        <p>We sampled holdings from the panel with notebook 07&#39;s method (the 5 largest filings plus 5 at random, <code>random_state=7</code>, 2 holdings each) and compared each with the filing&#39;s human-readable schedule of investments.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Outcome</p>
+</td><td colspan="1" rowspan="1"><p>Holdings</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Fair value and principal match the filing</p>
+</td><td colspan="1" rowspan="1"><p>18</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Not a holding (commitment disclosure)</p>
+</td><td colspan="1" rowspan="1"><p>2</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Value disagreements</p>
+</td><td colspan="1" rowspan="1"><p>0</p>
+</td></tr>
+</table>
+<p>The 18 matches span three unit conventions (thousands; thousands to one decimal; millions), equity with no principal, an undrawn revolver at a small negative value, and a warrant the filing reports with no value.</p>
+<h2 is-upgraded>Findings</h2>
+<ul>
+<li><strong>Commitment rows become panel rows.</strong> Ares Capital&#39;s soi_row 58925 (Repairify) and North Haven&#39;s soi_row 120878 (Granicus) carry only unfunded-commitment facts. They add nothing to any total, so reconciliation is unaffected, but they inflate holding counts.</li>
+<li><strong>How the SOI writes identifiers.</strong> A trailing number counts repeated lines for an issuer (&#34;Qualus Power Services Corp. 4&#34; is the fourth of four lines); some filers prefix the industry header (&#34;Aerospace &amp; Defense MRO Holdings ...&#34;).</li>
+</ul>
+<p class="image-container"><img alt="Check S07: Snoopy Bidco in Blackstone Secured Lending&amp;rsquo;s schedule, fair value 339,635 and principal 354,710 (in thousands), as in the panel" src="img/468c374f5b0d11c.png"></p>
+<p>EdgarTools was not used: the brief makes it optional with a pinned version, and none was announced.</p>
+<pre><code language="language-bash" class="language-bash">python scripts/p4a_spot_check_sample.py
+python scripts/p4b_fill_spot_check.py
+</code></pre>
+<p>Row by row: <code>reports/spot_check.csv</code>. Write-up: <code>reports/dependency_check.md</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Part 5: Pipeline, tests and economics" duration="8">
+        <h2 is-upgraded>One command</h2>
+<p><code>dvc repro</code> runs <code>acquire</code>, <code>parse</code>, <code>clean</code>, <code>reconcile</code> and <code>report</code>. On a fresh clone after <code>dvc pull</code> it skips every stage; forced, it reproduces Part 3 exactly (82 of 171, 38.0%, self-check 10/10), on Windows and on Linux (Docker <code>python:3.11-slim</code>, <code>dvc repro -f</code>).</p>
+<p>A lesson from building it: a <code>.gitignore</code> written as <code>outputs/*</code> with <code>!</code> re-includes looked right to Git, but DVC&#39;s own Git library treated the folder as ignored, so a plain <code>dvc pull</code> silently skipped the panel. Listing each output explicitly, with no wildcard, fixed it, verified on a fresh clone.</p>
+<h2 is-upgraded>Tests that fail</h2>
+<p>25 tests pass. Each cleaning rule&#39;s test was shown to fail when the rule is broken, then restored (<code>reports/tests_that_fail.md</code>).</p>
+<h2 is-upgraded>Unit economics</h2>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Line</p>
+</td><td colspan="1" rowspan="1"><p>Value</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Cost per completed task</p>
+</td><td colspan="1" rowspan="1"><p>$0.0000083 of compute per filing (51 s at $0.10/hour, 171 filings)</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Latency</p>
+</td><td colspan="1" rowspan="1"><p>51 s for the release, 0.30 s per filing</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Human time replaced</p>
+</td><td colspan="1" rowspan="1"><p>82 admitted filings at 2 h each: ×0.5 82 h, ×1 164 h, ×2 328 h</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Quality</p>
+</td><td colspan="1" rowspan="1"><p>82 of 171 filings, 38.0% of dollars; 18 of 18 checked holdings match</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Scale</p>
+</td><td colspan="1" rowspan="1"><p>every quarter since Q4 2022, 16 quarters: about 14 minutes and $0.02 of compute (upper bounds)</p>
+</td></tr>
+</table>
+<p>Assumptions and the build-versus-buy paragraph: <code>reports/economics.md</code>.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Results at a glance" duration="3">
+        <table>
+<tr><td colspan="1" rowspan="1"></td><td colspan="1" rowspan="1"><p>Result</p>
+</td><td colspan="1" rowspan="1"><p>Part</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Release</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>2026q1</code>: the SEC&#39;s <code>2026_01</code>, <code>2026_02</code> and <code>2026_03</code> files merged, 178 filings (176 current), 173,976 SOI rows</p>
+</td><td colspan="1" rowspan="1"><p>0</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Coverage</strong></p>
+</td><td colspan="1" rowspan="1"><p><strong>82 of 171 filings admitted (48.0%), $204.9bn of $538.9bn filed fair value (38.0%)</strong>; 5 filings with no SOI rows reported separately</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Cleaning</strong></p>
+</td><td colspan="1" rowspan="1"><p>7 rules, each from an artifact observed in the release, with an example and a test that fails without it; the starter kit&#39;s baseline admits 72 filings (24.2%)</p>
+</td><td colspan="1" rowspan="1"><p>2, 3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Triage</strong></p>
+</td><td colspan="1" rowspan="1"><p>all 89 excluded filings categorized with evidence and an example</p>
+</td><td colspan="1" rowspan="1"><p>3</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Verified by hand</strong></p>
+</td><td colspan="1" rowspan="1"><p>20 holdings across 10 filings: 18 match on fair value and principal, 2 are commitment disclosures, 0 value disagreements</p>
+</td><td colspan="1" rowspan="1"><p>4</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Reproducible</strong></p>
+</td><td colspan="1" rowspan="1"><p>a fresh clone rebuilds with <code>dvc pull && dvc repro</code> (every stage skipped), self-check 10/10, 25 tests pass</p>
+</td><td colspan="1" rowspan="1"><p>5</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="The app" duration="5">
+        <p>A read-only Streamlit app over the pipeline&#39;s outputs, deployed on AWS EC2 in <code>us-east-2</code>, the same region as the DVC remote: <a href="http://13.184.184.213:8501/" target="_blank"><strong>http://13.184.184.213:8501/</strong></a>.</p>
+<p>It never runs the pipeline and needs no AWS keys. It reads the reports that are in Git and the panel pulled from the public DVC remote, so every number it shows traces to a file in the repository.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Page</p>
+</td><td colspan="1" rowspan="1"><p>Shows</p>
+</td><td colspan="1" rowspan="1"><p>Reads</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Home</p>
+</td><td colspan="1" rowspan="1"><p>headline coverage and the seven cleaning rules</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/coverage.json</code>, <code>reports/cleaning_log.csv</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Coverage</p>
+</td><td colspan="1" rowspan="1"><p>every attempted filing, filtered by admitted, excluded or triage category</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/coverage.csv</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Triage</p>
+</td><td colspan="1" rowspan="1"><p>one excluded filing&#39;s gap, evidence, category and example</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/triage.md</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Panel</p>
+</td><td colspan="1" rowspan="1"><p>holdings of an admitted filing, searchable, with a link to the filing on EDGAR</p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/panel/holdings.parquet</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Spot checks</p>
+</td><td colspan="1" rowspan="1"><p>the Part 4 checks against the filings</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/spot_check.csv</code>, <code>reports/dependency_check.md</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reports</p>
+</td><td colspan="1" rowspan="1"><p>the Markdown deliverables</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/*.md</code>, <code>docs/*.md</code></p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="The app&amp;rsquo;s Home page: 82 of 171 filings admitted, 38.0% of filed fair value" src="img/c5ce8497b100aebc.png"></p>
+<p class="image-container"><img alt="The Triage page: one excluded filing&amp;rsquo;s evidence from reports/triage.md" src="img/702418ef2ac4985a.png"></p>
+<h2 is-upgraded>How it is deployed</h2>
+<p>The server clones the repository with a read-only deploy key, pulls the panel with <code>dvc pull outputs/panel/holdings.parquet</code> from the public remote, and runs Streamlit as a <code>systemd</code> service, so it restarts on reboot. After a merge, <code>git pull</code>, <code>dvc pull</code> and a service restart bring it up to date.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Conclusions" duration="3">
+        <ul>
+<li><strong>Reconciliation is what makes the panel trustworthy.</strong> The kit&#39;s two rules admit 72 filings (24.2% of dollars); seven evidenced rules admit 82 (38.0%), and every exclusion is explained rather than forced.</li>
+<li><strong>The parse is faithful.</strong> Values agree with the filings (18 of 18 checked) and, for most excluded filings, with the filers&#39; own XBRL facts. The remaining gaps come from how filers tag their schedules.</li>
+<li><strong>Treat every source as a claim to check.</strong> The SEC&#39;s own data set hides fair value under headers missing from its TAG table (<code>reports/issue_draft.md</code>), and the starter kit&#39;s totals rule drops real borrowers. Both were found by checking, not assumed.</li>
+<li><strong>Limits.</strong> One release, mostly 10-Ks; 46 excluded filings ($268.6bn) are categorized <code>other</code> with evidence but no single cause; the hand check covers 20 holdings.</li>
+</ul>
+<h2 is-upgraded>Links</h2>
+<ul>
+<li>Repository: <a href="https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b" target="_blank">github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b</a></li>
+<li>Deployed app: <a href="http://13.184.184.213:8501/" target="_blank">http://13.184.184.213:8501/</a></li>
+<li>Demo video: TODO</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

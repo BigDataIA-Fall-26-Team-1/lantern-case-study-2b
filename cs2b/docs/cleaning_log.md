@@ -12,14 +12,19 @@ Machine-readable log: `reports/cleaning_log.csv`. Measurements: `reports/p2_arti
 | Rules | Filings admitted (of 171) | Share of filed fair value |
 |---|---:|---:|
 | Kit baseline (`rule_totals`, `rule_cash`) | 72 | 24.2% |
-| Team rules | 79 | 27.0% |
+| Part 2 rules (before `rule_issuer_subtotals`) | 79 | 27.0% |
+| Team rules (final `TEAM_RULES`, 7 rules) | 82 | 38.0% |
 
-Newly admitted: Bain Capital Specialty Finance (0001193125-26-077703, gap +90.5% to 0.00%),
-New Mountain Finance (0001496099-26-000008, +58.7% to +0.93%), PennantPark Floating Rate
-(0001193125-26-042778, +53.3% to +0.29%), Oaktree Specialty Lending (0001414932-26-000005,
-+18.3% to +0.98%), PennantPark Investment 10-K/A (0001193125-26-021227, +98.3% to 0.00%),
-New Mountain Private Credit (0002037804-26-000005, +13.6% to +0.67%), TriplePoint Venture
-Growth (0001580345-26-000008, -2.85% to 0.00%). No filing lost admission.
+Newly admitted with the final rules (compared with the kit's two rules): Ares Capital
+(0001287750-26-000006, gap +15.65% to +0.46%), Ares Strategic Income (0001918712-26-000018,
++2.30% to 0.00%), Golub Capital BDC (0001476765-26-000012, +2.11% to +0.88%), Bain Capital
+Specialty Finance (0001193125-26-077703, +90.47% to 0.00%), New Mountain Finance
+(0001496099-26-000008, +58.66% to +0.93%), PennantPark Floating Rate (0001193125-26-042778,
++53.28% to +0.29%), Oaktree Specialty Lending (0001414932-26-000005, +18.30% to +0.98%),
+PennantPark Investment 10-K/A (0001193125-26-021227, +98.34% to 0.00%), New Mountain Private
+Credit (0002037804-26-000005, +13.62% to +0.67%), TriplePoint Venture Growth
+(0001580345-26-000008, -2.85% to 0.00%). No filing lost admission. Measured by
+`scripts/p2b_measure_rules.py` (`reports/p2_rule_ablation.csv`).
 
 ## Rules
 
@@ -32,7 +37,7 @@ Part 1 kept these rows apart by adding the axis to the coalescing key; this rule
 Defense ATS First Lien Senior Secured Loan ..." on `Bain Capital Senior Loan Program, LLC [Member]`,
 fair value $20,114,000.
 **Rows affected.** 788 holdings in 10 filings ($4,847.3m).
-**Effect.** Without it, 75 filings are admitted instead of 79 (27.0% to 25.1% of dollars).
+**Effect.** Without it, 78 filings are admitted instead of 82 (38.0% to 36.1% of dollars).
 **Test.** `test_rule_jv_subsidiary_drops_jv_portfolio_rows`.
 
 ### 2. `rule_jv_schedule_style`: JV rows with no subsidiary axis (PennantPark)
@@ -46,7 +51,7 @@ facts do not record which report they belong to.
 **Example.** PennantPark Investment 10-K/A 0001193125-26-021227, soi_row 160;161.
 **Rows affected.** 415 holdings in 3 filings, all PennantPark; no other filer matches the pattern.
 In 0001193125-26-021227, 117 rows ($1,265.9m), the same 117 Part 1 found against the filing.
-**Effect.** Without it, 77 filings are admitted instead of 79. PennantPark Investment's 10-Q
+**Effect.** Without it, 80 filings are admitted instead of 82 (38.0% to 37.3% of dollars). PennantPark Investment's 10-Q
 (0001193125-26-042780) improves from +141.5% to +30.1% but is still not admitted (Part 3 triage).
 **Verified against the filings (26 Oct 2026).** In both 10-Qs the dropped rows sit in the JV listing
 in the notes, not in the BDC's own schedule, and the BDC's stake appears in its own schedule:
@@ -71,7 +76,7 @@ inputs, not holdings.
 **Example.** New Mountain Finance 0001496099-26-000008, soi_row 13343: "First Lien Investments"
 on `Weighted Average`. Log example: 0001628280-26-011734, soi_row 72803.
 **Rows affected.** 530 holdings (534 before earlier rules; 14 filings).
-**Effect.** No change in coverage (79 filings, 27.0% either way). The rule exists because these
+**Effect.** No change in coverage (82 filings, 38.0% either way). The rule exists because these
 rows are not holdings, not to make any filing reconcile; its evidence is the test.
 **Test.** `test_rule_range_axis_drops_range_bounds`.
 
@@ -97,7 +102,7 @@ identifier starting with "Total", which also drops real borrowers: 12 holdings i
 and any row with a spread or maturity (MidCap Apollo's PAI Pharma revolver, soi_row 150389).
 **Example.** Saratoga 0001213900-26-002153, soi_row 2816: "Total cash and cash equivalents".
 **Rows affected.** 31 holdings (the kit's rule: 45).
-**Effect.** Without it, 78 filings are admitted instead of 79 (TriplePoint Venture Growth).
+**Effect.** Without it, 81 filings are admitted instead of 82 (38.0% to 37.9% of dollars).
 **Test.** `test_rule_totals_v2_keeps_borrowers_named_total`.
 
 ### 6. `rule_cash` (kit rule, kept)
@@ -106,7 +111,7 @@ and any row with a spread or maturity (MidCap Apollo's PAI Pharma revolver, soi_
 total ($316,015k) excludes cash.
 **Example.** Saratoga 0001213900-26-002153, soi_row 2826.
 **Rows affected.** 34 holdings.
-**Effect.** Without it, filings admitted stay at 79 but dollar coverage falls from 27.0% to 24.5%.
+**Effect.** Without it, filings admitted stay at 82 but dollar coverage falls from 38.0% to 35.6%.
 Whether a filed total includes cash varies by filer; filings where it does would show a negative
 gap and are triaged in Part 3.
 
