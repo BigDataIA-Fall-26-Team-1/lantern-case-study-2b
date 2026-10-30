@@ -41,7 +41,7 @@ A pipeline for one SEC release, `2026q1` (the SEC's `2026_01`, `2026_02` and `20
 ### Links
 
 - **Repository:** [github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b](https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b)
-- **Deployed app:** TODO
+- **Deployed app:** [http://13.184.184.213:8501/](http://13.184.184.213:8501/)
 - **Demo video:** TODO
 
 ## Architecture
@@ -299,9 +299,28 @@ Duration: 3
 | **Reproducible** | a fresh clone rebuilds with `dvc pull && dvc repro` (every stage skipped), self-check 10/10, 25 tests pass | 5 |
 
 ## The app
-Duration: 3
+Duration: 5
 
-TODO: the Streamlit app on AWS EC2 (link, pages, how it is deployed).
+A read-only Streamlit app over the pipeline's outputs, deployed on AWS EC2 in `us-east-2`, the same region as the DVC remote: **[http://13.184.184.213:8501/](http://13.184.184.213:8501/)**.
+
+It never runs the pipeline and needs no AWS keys. It reads the reports that are in Git and the panel pulled from the public DVC remote, so every number it shows traces to a file in the repository.
+
+| Page | Shows | Reads |
+|---|---|---|
+| Home | headline coverage and the seven cleaning rules | `reports/coverage.json`, `reports/cleaning_log.csv` |
+| Coverage | every attempted filing, filtered by admitted, excluded or triage category | `reports/coverage.csv` |
+| Triage | one excluded filing's gap, evidence, category and example | `reports/triage.md` |
+| Panel | holdings of an admitted filing, searchable, with a link to the filing on EDGAR | `outputs/panel/holdings.parquet` |
+| Spot checks | the Part 4 checks against the filings | `reports/spot_check.csv`, `reports/dependency_check.md` |
+| Reports | the Markdown deliverables | `reports/*.md`, `docs/*.md` |
+
+![The app's Home page: 82 of 171 filings admitted, 38.0% of filed fair value](img/app-home.png)
+
+![The Triage page: one excluded filing's evidence from reports/triage.md](img/app-triage.png)
+
+### How it is deployed
+
+The server clones the repository with a read-only deploy key, pulls the panel with `dvc pull outputs/panel/holdings.parquet` from the public remote, and runs Streamlit as a `systemd` service, so it restarts on reboot. After a merge, `git pull`, `dvc pull` and a service restart bring it up to date.
 
 ## Conclusions
 Duration: 3
@@ -314,5 +333,5 @@ Duration: 3
 ### Links
 
 - Repository: [github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b](https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b)
-- Deployed app: TODO
+- Deployed app: [http://13.184.184.213:8501/](http://13.184.184.213:8501/)
 - Demo video: TODO
