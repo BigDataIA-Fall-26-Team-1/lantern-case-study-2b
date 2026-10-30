@@ -61,7 +61,7 @@
 <h2 is-upgraded>Links</h2>
 <ul>
 <li><strong>Repository: </strong><a href="https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b" target="_blank">github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b</a></li>
-<li><strong>Deployed app:</strong> TODO</li>
+<li><strong>Deployed app: </strong><a href="http://13.184.184.213:8501/" target="_blank">http://13.184.184.213:8501/</a></li>
 <li><strong>Demo video:</strong> TODO</li>
 </ul>
 
@@ -486,8 +486,43 @@ python scripts/p4b_fill_spot_check.py
 
       </google-codelab-step>
     
-      <google-codelab-step label="The app" duration="3">
-        <p>TODO: the Streamlit app on AWS EC2 (link, pages, how it is deployed).</p>
+      <google-codelab-step label="The app" duration="5">
+        <p>A read-only Streamlit app over the pipeline&#39;s outputs, deployed on AWS EC2 in <code>us-east-2</code>, the same region as the DVC remote: <a href="http://13.184.184.213:8501/" target="_blank"><strong>http://13.184.184.213:8501/</strong></a>.</p>
+<p>It never runs the pipeline and needs no AWS keys. It reads the reports that are in Git and the panel pulled from the public DVC remote, so every number it shows traces to a file in the repository.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Page</p>
+</td><td colspan="1" rowspan="1"><p>Shows</p>
+</td><td colspan="1" rowspan="1"><p>Reads</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Home</p>
+</td><td colspan="1" rowspan="1"><p>headline coverage and the seven cleaning rules</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/coverage.json</code>, <code>reports/cleaning_log.csv</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Coverage</p>
+</td><td colspan="1" rowspan="1"><p>every attempted filing, filtered by admitted, excluded or triage category</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/coverage.csv</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Triage</p>
+</td><td colspan="1" rowspan="1"><p>one excluded filing&#39;s gap, evidence, category and example</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/triage.md</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Panel</p>
+</td><td colspan="1" rowspan="1"><p>holdings of an admitted filing, searchable, with a link to the filing on EDGAR</p>
+</td><td colspan="1" rowspan="1"><p><code>outputs/panel/holdings.parquet</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Spot checks</p>
+</td><td colspan="1" rowspan="1"><p>the Part 4 checks against the filings</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/spot_check.csv</code>, <code>reports/dependency_check.md</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Reports</p>
+</td><td colspan="1" rowspan="1"><p>the Markdown deliverables</p>
+</td><td colspan="1" rowspan="1"><p><code>reports/*.md</code>, <code>docs/*.md</code></p>
+</td></tr>
+</table>
+<p class="image-container"><img alt="The app&amp;rsquo;s Home page: 82 of 171 filings admitted, 38.0% of filed fair value" src="img/c5ce8497b100aebc.png"></p>
+<p class="image-container"><img alt="The Triage page: one excluded filing&amp;rsquo;s evidence from reports/triage.md" src="img/702418ef2ac4985a.png"></p>
+<h2 is-upgraded>How it is deployed</h2>
+<p>The server clones the repository with a read-only deploy key, pulls the panel with <code>dvc pull outputs/panel/holdings.parquet</code> from the public remote, and runs Streamlit as a <code>systemd</code> service, so it restarts on reboot. After a merge, <code>git pull</code>, <code>dvc pull</code> and a service restart bring it up to date.</p>
 
 
       </google-codelab-step>
@@ -502,7 +537,7 @@ python scripts/p4b_fill_spot_check.py
 <h2 is-upgraded>Links</h2>
 <ul>
 <li>Repository: <a href="https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b" target="_blank">github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b</a></li>
-<li>Deployed app: TODO</li>
+<li>Deployed app: <a href="http://13.184.184.213:8501/" target="_blank">http://13.184.184.213:8501/</a></li>
 <li>Demo video: TODO</li>
 </ul>
 
