@@ -1,0 +1,8 @@
+# The app only (not the pipeline). Install in its own venv: pip install -r app/requirements-app.txt
+# pandas, numpy and pyarrow are pinned as in cs2b/requirements.txt: the panel was written with pandas 3.1.
+pandas==3.1.0
+numpy==2.5.4; python_version >= "3.12"
+numpy==2.4.6; python_version < "3.12"
+pyarrow==26.0.0
+# Tested with pandas 3.1.0 on Python 3.14 (Windows); older releases, such as 1.39, require pandas below 3.
+streamlit==1.66.1
