@@ -42,7 +42,7 @@ A pipeline for one SEC release, `2026q1` (the SEC's `2026_01`, `2026_02` and `20
 
 - **Repository:** [github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b](https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b)
 - **Deployed app:** [http://13.184.184.213:8501/](http://13.184.184.213:8501/)
-- **Demo video:** TODO
+- **Demo video:** [https://drive.google.com/drive/folders/1NERwUaC2sUy7OVYm4c3uwligFfkIY5N8?usp=sharing](https://drive.google.com/drive/folders/1NERwUaC2sUy7OVYm4c3uwligFfkIY5N8?usp=sharing)
 
 ## Architecture
 Duration: 3
@@ -334,4 +334,4 @@ Duration: 3
 
 - Repository: [github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b](https://github.com/BigDataIA-Fall-26-Team-1/lantern-case-study-2b)
 - Deployed app: [http://13.184.184.213:8501/](http://13.184.184.213:8501/)
-- Demo video: TODO
+- Demo video: [https://drive.google.com/drive/folders/1NERwUaC2sUy7OVYm4c3uwligFfkIY5N8?usp=sharing](https://drive.google.com/drive/folders/1NERwUaC2sUy7OVYm4c3uwligFfkIY5N8?usp=sharing)
