@@ -5,9 +5,9 @@ DAMG 7245, Fall 2026. **Team 1:** Pranav, Preksha, Pradyumna.
 A reconciled holdings panel for the SEC BDC data sets, release **2026q1** (the monthly files 2026_01,
 2026_02 and 2026_03, mostly fiscal-2025 10-Ks), built on the LANTERN starter kit in `cs2b/`.
 
-**Codelab (step-by-step walkthrough):** https://bigdataia-fall-26-team-1.github.io/lantern-case-study-2b/lantern-case-study-2b/
+**Codelab :** https://bigdataia-fall-26-team-1.github.io/lantern-case-study-2b/lantern-case-study-2b/
 
-**Live app (read-only):** http://13.184.184.213:8501 (see [`cs2b/docs/app.md`](cs2b/docs/app.md))
+**Live app :** http://13.184.184.213:8501
 
 **Demo video:** TODO
 
