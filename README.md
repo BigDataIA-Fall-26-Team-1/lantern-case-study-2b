@@ -9,7 +9,7 @@ A reconciled holdings panel for the SEC BDC data sets, release **2026q1** (the m
 
 **Live app :** http://13.184.184.213:8501
 
-**Demo video:** TODO
+**Demo video:** https://drive.google.com/drive/folders/1NERwUaC2sUy7OVYm4c3uwligFfkIY5N8?usp=sharing
 
 ## Results
 
